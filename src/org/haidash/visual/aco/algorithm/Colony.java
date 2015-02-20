@@ -17,7 +17,7 @@ public class Colony {
     private static final Logger LOGGER = Logger.getLogger(Colony.class);
 	private final Pair<Double, Double>[][] globalPheromones;
     private final Map<Integer, Cycle> cycles;
-    private final Set<List<Integer>> badPaths;
+	private final Set<List<Integer>> badPaths;
 
     private SearchResult searchResult;
 
@@ -29,6 +29,10 @@ public class Colony {
 
 	public Pair<Double, Double>[][] getGlobalPheromones() {
         return globalPheromones;
+    }
+
+    public SearchResult getSearchResult() {
+        return searchResult;
     }
 
     @SuppressWarnings("unchecked")
@@ -59,8 +63,41 @@ public class Colony {
 
         for (int i = 0; i < properties.getNumGeneration(); i++) {
 
-            final Generation generation = new Generation(badPaths, cycles, globalPheromones);
-            searchResult = generation.start();
+			final Generation generation = new Generation(badPaths, cycles, globalPheromones);
+
+			final SearchResult result= generation.start();
+
+            if (result == null) {
+				continue;
+			}
+
+			if (searchResult == null) {
+				searchResult = result;
+
+				LOGGER.info("New best path("
+						+ (System.currentTimeMillis() - startTime)
+						+ " ms) "
+						+ searchResult.getTotalCost()
+						+ " "
+						+ searchResult.getVisited().toString());
+
+				continue;
+			}
+
+			boolean isBestTotalCost = result.getTotalCost() < searchResult.getTotalCost();
+			boolean isEqualsTotalCost = result.getTotalCost() == searchResult.getTotalCost();
+			boolean isLessNodes = result.getVisited().size() < searchResult.getVisited().size();
+
+			if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
+				searchResult = result;
+
+				LOGGER.info("New best path("
+						+ (System.currentTimeMillis() - startTime)
+						+ " ms) "
+						+ searchResult.getTotalCost()
+						+ " "
+						+ searchResult.getVisited().toString());
+			}
 
             updatePheromones();
         }
@@ -73,12 +110,8 @@ public class Colony {
             LOGGER.info("Path not found");
         } else {
             LOGGER.info("Best path: " + searchResult.getTotalCost());
-            LOGGER.info(searchResult.getVisited().toString());
+			// LOGGER.info(searchResult.getVisited().toString());
         }
-    }
-
-    public SearchResult getSearchResult() {
-        return searchResult;
     }
 
     private void updatePheromones() {

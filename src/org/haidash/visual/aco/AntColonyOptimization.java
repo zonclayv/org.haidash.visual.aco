@@ -8,9 +8,9 @@ import org.haidash.visual.aco.views.GeneralScene;
 
 public class AntColonyOptimization extends Application {
 
-    public static void main(final String[] args) {
-        launch(args);
-    }
+	public static void main(final String[] args) {
+		launch(args);
+	}
 
     @Override
     public void start(final Stage stage) throws Exception {

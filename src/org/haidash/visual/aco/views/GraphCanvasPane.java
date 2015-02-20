@@ -22,6 +22,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
+import javafx.util.Duration;
 
 import org.haidash.visual.aco.algorithm.model.AcoProperties;
 import org.haidash.visual.aco.algorithm.model.Pair;
@@ -236,6 +237,7 @@ public class GraphCanvasPane extends ScrollPane {
 			transition.setFromY(line.getStartY() - 5);
 			transition.setToX(line.getEndX() - 5);
 			transition.setToY(line.getEndY() - 5);
+			transition.setDelay(Duration.millis(50));
 
 			animation.getChildren().add(transition);
 		}

@@ -9,7 +9,6 @@ import org.haidash.visual.aco.algorithm.model.Cycle;
 import org.haidash.visual.aco.algorithm.model.Pair;
 import org.haidash.visual.aco.algorithm.model.SearchResult;
 
-
 public class Generation {
 
 	// private static final Logger LOGGER = Logger.getLogger(Generation.class);
@@ -25,7 +24,9 @@ public class Generation {
 
 	private SearchResult bestResult;
 
-	public Generation(final Set<List<Integer>> badPaths, final Map<Integer, Cycle> cycles, final Pair<Double, Double>[][] globalPheromones) {
+	public Generation(final Set<List<Integer>> badPaths,
+			final Map<Integer, Cycle> cycles,
+ final Pair<Double, Double>[][] globalPheromones) {
 
 		// global
 		this.badPaths = badPaths;
@@ -80,7 +81,21 @@ public class Generation {
 
 			ant.updatePheromones(globalPheromones);
 
-			if (result != null && (bestResult == null || result.getTotalCost() < bestResult.getTotalCost())) {
+			if (result == null) {
+				continue;
+			}
+
+			if (bestResult == null) {
+				bestResult = result;
+
+				continue;
+			}
+
+			boolean isBestTotalCost = result.getTotalCost() < bestResult.getTotalCost();
+			boolean isEqualsTotalCost = result.getTotalCost() == bestResult.getTotalCost();
+			boolean isLessNodes = result.getVisited().size() < bestResult.getVisited().size();
+
+			if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
 				bestResult = result;
 			}
 		}

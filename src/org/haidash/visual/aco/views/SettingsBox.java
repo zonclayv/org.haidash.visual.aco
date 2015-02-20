@@ -112,7 +112,7 @@ public class SettingsBox extends VBox {
 		label.setPrefWidth(prefWidth * 0.2);
 		label.setAlignment(Pos.CENTER_LEFT);
 
-		final Slider slider = new Slider(1, 100, 10);
+		final Slider slider = new Slider(1, 400, 10);
 		slider.setBlockIncrement(1);
 		slider.setPrefWidth(prefWidth * 0.65);
 		slider.setPrefHeight(25);
