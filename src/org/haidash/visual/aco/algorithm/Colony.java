@@ -21,11 +21,19 @@ public class Colony {
 
     private SearchResult searchResult;
 
-    public Colony() {
-        this.cycles = new HashMap<>();
-        this.badPaths = new HashSet<>();
-        this.globalPheromones = initGlobalPheromones();
-    }
+	public Colony() {
+		this.cycles = new HashMap<>();
+		this.badPaths = new HashSet<>();
+		this.globalPheromones = initGlobalPheromones();
+	}
+
+	public Set<List<Integer>> getBadPaths() {
+		return badPaths;
+	}
+
+	public Map<Integer, Cycle> getCycles() {
+		return cycles;
+	}
 
 	public Pair<Double, Double>[][] getGlobalPheromones() {
         return globalPheromones;
@@ -63,7 +71,7 @@ public class Colony {
 
         for (int i = 0; i < properties.getNumGeneration(); i++) {
 
-			final Generation generation = new Generation(badPaths, cycles, globalPheromones);
+			final Generation generation = new Generation(this);
 
 			final SearchResult result= generation.start();
 

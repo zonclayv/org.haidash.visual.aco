@@ -1,47 +1,55 @@
 package org.haidash.visual.aco.algorithm;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
 import org.haidash.visual.aco.algorithm.model.AcoProperties;
-import org.haidash.visual.aco.algorithm.model.Cycle;
 import org.haidash.visual.aco.algorithm.model.Pair;
 import org.haidash.visual.aco.algorithm.model.SearchResult;
 
 public class Generation {
 
 	// private static final Logger LOGGER = Logger.getLogger(Generation.class);
-
-	// global
-	private final Set<List<Integer>> badPaths;
-	private final Map<Integer, Cycle> cycles;
-	private final Pair<Double, Double>[][] globalPheromones;
+	private static final Random RANDOM = new Random(System.nanoTime());
 
 	// local
 	private final Pair<Double, Double>[][] pheromones;
 	private final int[][] nodeVisits;
-	private final List<Integer>[] localShortPaths;
+	private final List<Integer>[] improverPaths;
 
 	private SearchResult bestResult;
 
+	private final Colony colony;
+
 	@SuppressWarnings("unchecked")
-	public Generation(final Set<List<Integer>> badPaths,
-			final Map<Integer, Cycle> cycles,
- final Pair<Double, Double>[][] globalPheromones) {
+	public Generation(final Colony colony) {
+
+		this.colony = colony;
 
 		final AcoProperties properties = AcoProperties.getInstance();
 		final int numNodes = properties.getNumNodes();
 
-		// global
-		this.badPaths = badPaths;
-		this.cycles = cycles;
-		this.globalPheromones = globalPheromones;
 
 		// local
 		this.nodeVisits = initMatrix();
-		this.localShortPaths = new List[numNodes];
-		this.pheromones = initPheromones(globalPheromones);
+		this.improverPaths = new List[numNodes];
+		this.pheromones = initPheromones();
+	}
+
+	public Colony getColony() {
+		return colony;
+	}
+
+	public List<Integer>[] getImproverPaths() {
+		return improverPaths;
+	}
+
+	public int[][] getNodeVisits() {
+		return nodeVisits;
+	}
+
+	public Pair<Double, Double>[][] getPheromones() {
+		return pheromones;
 	}
 
 	private int[][] initMatrix() {
@@ -60,11 +68,13 @@ public class Generation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Pair<Double, Double>[][] initPheromones(final Pair<Double, Double>[][] globalPheromones) {
+	private Pair<Double, Double>[][] initPheromones() {
 
 		final AcoProperties properties = AcoProperties.getInstance();
 		final int numNodes = properties.getNumNodes();
 		final Pair<Double, Double>[][] pheromones = new Pair[numNodes][numNodes];
+
+		final Pair<Double, Double>[][] globalPheromones = colony.getGlobalPheromones();
 
 		for (int i = 0; i < numNodes; i++) {
 			for (int j = 0; j < numNodes; j++) {
@@ -81,11 +91,17 @@ public class Generation {
 
 		for (int i = 0; i < properties.getNumAnts(); i++) {
 
-			final Ant ant = new Ant(badPaths, cycles, nodeVisits, pheromones, localShortPaths);
+			AbstractAnt ant = null;
+
+			final int rand = RANDOM.nextInt(3);
+
+			if (rand == 0) {
+				ant = new WorkerAnt(this);
+			} else {
+				ant = new FinderAnt(this);
+			}
 
 			final SearchResult result = ant.search();
-
-			ant.updatePheromones(globalPheromones);
 
 			if (result == null) {
 				continue;
