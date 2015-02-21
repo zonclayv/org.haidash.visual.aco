@@ -29,6 +29,7 @@ public class Ant {
 	private final List<Integer> visited;
 	private final List<Integer> spentFuelLevel;
 	private final int[] tempFuelLevel;
+	private final List<Integer>[] localShortPaths;
 	// ant
 	private int node;
 	private int fuelBalance = 0;
@@ -38,7 +39,8 @@ public class Ant {
 	public Ant(final Set<List<Integer>> badPaths,
 			final Map<Integer, Cycle> cycles,
 			final int[][] visitsCount,
-			final Pair<Double, Double>[][] localPheromones) {
+			final Pair<Double, Double>[][] localPheromones,
+			final List<Integer>[] localShortPaths) {
 
 		// global
 		this.badPaths = badPaths;
@@ -47,11 +49,12 @@ public class Ant {
 		// local
 		this.visitsCount = visitsCount;
 		this.localPheromones = localPheromones;
+		this.localShortPaths = localShortPaths;
 
 		// ant
 		final AcoProperties properties = AcoProperties.getInstance();
 
-		int startNode = properties.getStartNode();
+		int startNode = generateStartNode();
 
 		this.node = startNode;
 		this.tempFuelLevel = properties.getFuelLevels().clone();
@@ -187,6 +190,39 @@ public class Ant {
 					continue;
 				}
 
+				final List<Integer> shortPath = localShortPaths[nextNode];
+
+				if (shortPath != null) {
+
+					final int nextInt = RANDOM.nextInt(2);
+
+					if (nextInt == 0) {
+						int curNode = currentNode;
+
+						for (int i = 0; i < shortPath.size(); i++) {
+
+							final int nextLocalNode = shortPath.get(i);
+							final int fuelLocalCost = nodesMap[curNode][nextLocalNode];
+							final int availableLocalFuel = getAvailableFuel(curNode);
+
+							if (availableLocalFuel < fuelLocalCost) {
+								outOfFuel = true;
+								chances.clear();
+								return;
+							}
+
+							final int usedLocalFuel = fuelLocalCost - fuelBalance;
+
+							goToNextNode(curNode, nextLocalNode, usedLocalFuel);
+
+							curNode = nextLocalNode;
+						}
+
+						chances.clear();
+						return;
+					}
+				}
+
 			} else {
 
 				if (cycle == null) {
@@ -251,6 +287,27 @@ public class Ant {
 				chances.add(chance);
 			}
 		}
+	}
+
+	private int generateStartNode() {
+		final AcoProperties properties = AcoProperties.getInstance();
+		int startNode = properties.getStartNode();
+		int numNodes = properties.getNumNodes();
+		int targetNode = properties.getTargetNode();
+
+		int random = RANDOM.nextInt(2);
+
+		if(random!=0){
+			return startNode;
+		}
+
+		int rand = RANDOM.nextInt(numNodes - 1);
+
+		if ((rand != targetNode) && ((rand >= 0) && (rand < (numNodes - 1)))) {
+			startNode=rand;
+		}
+
+		return startNode;
 	}
 
 	private int getAvailableFuel(final int node) {
@@ -444,6 +501,18 @@ public class Ant {
 
 		SearchResult searchResult = null;
 
+		if ((node == properties.getTargetNode()) && (!visited.isEmpty() && (visited.get(0) != properties.getStartNode())) && !outOfFuel) {
+			Integer localStartNode = visited.get(0);
+			List<Integer> localBestPath = localShortPaths[localStartNode];
+
+			if ((localBestPath == null) || (localBestPath.size() > visited.size())) {
+				localShortPaths[localStartNode] = visited;
+				LOGGER.debug("New sub path " + visited.toString());
+			}
+
+			return searchResult;
+		}
+
 		if (outOfFuel) {
 			LOGGER.debug("Out fuel " + visited.toString());
 		} else {
@@ -455,13 +524,16 @@ public class Ant {
 	}
 
 	private int selectNextNode(final int currentNode) {
+		final AcoProperties properties = AcoProperties.getInstance();
 
 		final List<Chance> chances = new ArrayList<>();
 		final Cycle cycle = cycles.get(currentNode);
 
 		fillChances(currentNode, cycle, chances);
 
-		if ((chances.size() == 0) || outOfFuel) {
+		if ((chances.size() == 0) && !outOfFuel && (!visited.isEmpty() && (visited.get(visited.size() - 1) == properties.getTargetNode()))) {
+			return properties.getTargetNode();
+		} else if ((chances.size() == 0) || outOfFuel) {
 			outOfFuel = true;
 
 			badPaths.add(visited);

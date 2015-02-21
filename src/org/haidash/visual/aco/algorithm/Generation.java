@@ -21,12 +21,17 @@ public class Generation {
 	// local
 	private final Pair<Double, Double>[][] pheromones;
 	private final int[][] nodeVisits;
+	private final List<Integer>[] localShortPaths;
 
 	private SearchResult bestResult;
 
+	@SuppressWarnings("unchecked")
 	public Generation(final Set<List<Integer>> badPaths,
 			final Map<Integer, Cycle> cycles,
  final Pair<Double, Double>[][] globalPheromones) {
+
+		final AcoProperties properties = AcoProperties.getInstance();
+		final int numNodes = properties.getNumNodes();
 
 		// global
 		this.badPaths = badPaths;
@@ -35,6 +40,7 @@ public class Generation {
 
 		// local
 		this.nodeVisits = initMatrix();
+		this.localShortPaths = new List[numNodes];
 		this.pheromones = initPheromones(globalPheromones);
 	}
 
@@ -75,7 +81,7 @@ public class Generation {
 
 		for (int i = 0; i < properties.getNumAnts(); i++) {
 
-			final Ant ant = new Ant(badPaths, cycles, nodeVisits, pheromones);
+			final Ant ant = new Ant(badPaths, cycles, nodeVisits, pheromones, localShortPaths);
 
 			final SearchResult result = ant.search();
 
