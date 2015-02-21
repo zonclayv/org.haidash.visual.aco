@@ -19,7 +19,7 @@ import org.haidash.visual.aco.algorithm.model.SearchResult;
 /**
  * @author Haidash Aleh
  */
-public abstract class AbstractAnt {
+public class AbstractAnt {
 
 	private final static Logger LOGGER = Logger.getLogger(AbstractAnt.class);
 	private static final Random RANDOM = new Random(System.nanoTime());
@@ -45,8 +45,7 @@ public abstract class AbstractAnt {
 
 		// ant
 		final AcoProperties properties = AcoProperties.getInstance();
-
-		int startNode = getStartNode();
+		final int startNode = properties.getStartNode();
 
 		this.node = startNode;
 		this.tempFuelLevel = properties.getFuelLevels().clone();
@@ -147,7 +146,6 @@ public abstract class AbstractAnt {
 		final int[] remainsFuel = properties.getRemainsFuel();
 
 		final int[][] nodeVisits = generation.getNodeVisits();
-		final List<Integer>[] improverPaths = generation.getImproverPaths();
 		final Cycle cycle = colony.getCycles().get(currentNode);
 
 		double sum = -1.0;
@@ -164,20 +162,9 @@ public abstract class AbstractAnt {
 			final int availableFuel = getAvailableFuel(currentNode);
 
 			if (availableFuel >= fuelCost) {
-
 				if (isBadPath(visited, nextNode)) {
 					continue;
 				}
-
-				final int nextInt = RANDOM.nextInt(2);
-				final List<Integer> improverPath = improverPaths[nextNode];
-
-				if ((improverPath != null) && (nextInt == 0)) {
-					applyPath(currentNode, improverPath);
-					reachableNodes.clear();
-					return;
-				}
-
 			} else {
 
 				if (cycle == null) {
@@ -254,8 +241,6 @@ public abstract class AbstractAnt {
 
 		return tempFuel + fuelInCycle;
 	}
-
-	protected abstract int getStartNode();
 
 	private double getSumProbabilities(final int currentNode, final Cycle cycle, final int availableFuel, final int usedFuel) {
 
@@ -362,42 +347,17 @@ public abstract class AbstractAnt {
 		return colony.getBadPaths().contains(nodes);
 	}
 
-	protected boolean isImproverPath(final int startNode, final int targetNode) {
-		if ((node == targetNode) && (!visited.isEmpty() && (visited.get(0) != startNode)) && !outOfFuel) {
-
-			final Integer improverStartNode = visited.get(0);
-			final List<Integer>[] improverPaths = generation.getImproverPaths();
-			final List<Integer> improverPath = improverPaths[improverStartNode];
-
-			if ((improverPath == null) || (improverPath.size() > visited.size())) {
-				improverPaths[improverStartNode] = visited;
-				LOGGER.debug("New sub path " + visited.toString());
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
 	public SearchResult search() {
 
 		final AcoProperties properties = AcoProperties.getInstance();
-		final int startNode = properties.getStartNode();
-		final int targetNode = properties.getTargetNode();
 
-		while ((node != targetNode) && !outOfFuel && (node != -1)) {
+		while ((node != properties.getTargetNode()) && !outOfFuel && (node != -1)) {
 			node = selectNextNode(node);
-		}
-
-		if (isImproverPath(startNode, targetNode)) {
-			return null;
 		}
 
 		updatePheromones();
 
 		if (outOfFuel) {
-			// LOGGER.debug("Out fuel " + visited.toString());
 			return null;
 		}
 

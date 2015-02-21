@@ -1,8 +1,5 @@
 package org.haidash.visual.aco.algorithm;
 
-import java.util.List;
-import java.util.Random;
-
 import org.haidash.visual.aco.algorithm.model.AcoProperties;
 import org.haidash.visual.aco.algorithm.model.Pair;
 import org.haidash.visual.aco.algorithm.model.SearchResult;
@@ -10,38 +7,26 @@ import org.haidash.visual.aco.algorithm.model.SearchResult;
 public class Generation {
 
 	// private static final Logger LOGGER = Logger.getLogger(Generation.class);
-	private static final Random RANDOM = new Random(System.nanoTime());
 
 	// local
 	private final Pair<Double, Double>[][] pheromones;
 	private final int[][] nodeVisits;
-	private final List<Integer>[] improverPaths;
 
 	private SearchResult bestResult;
 
 	private final Colony colony;
 
-	@SuppressWarnings("unchecked")
 	public Generation(final Colony colony) {
 
 		this.colony = colony;
 
-		final AcoProperties properties = AcoProperties.getInstance();
-		final int numNodes = properties.getNumNodes();
-
-
 		// local
 		this.nodeVisits = initMatrix();
-		this.improverPaths = new List[numNodes];
 		this.pheromones = initPheromones();
 	}
 
 	public Colony getColony() {
 		return colony;
-	}
-
-	public List<Integer>[] getImproverPaths() {
-		return improverPaths;
 	}
 
 	public int[][] getNodeVisits() {
@@ -91,16 +76,7 @@ public class Generation {
 
 		for (int i = 0; i < properties.getNumAnts(); i++) {
 
-			AbstractAnt ant = null;
-
-			final int rand = RANDOM.nextInt(3);
-
-			if (rand == 0) {
-				ant = new WorkerAnt(this);
-			} else {
-				ant = new FinderAnt(this);
-			}
-
+			final AbstractAnt ant = new AbstractAnt(this);
 			final SearchResult result = ant.search();
 
 			if (result == null) {
