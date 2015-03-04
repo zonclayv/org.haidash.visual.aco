@@ -8,7 +8,7 @@ public class Test {
 
 	public static void main(final String[] args) {
 		File file = new File("files/new.txt");
-		AcoProperties.getInstance().initializeValue(file, false);
+		AcoProperties.getInstance().initializeValue(file);
 		Colony ac = new Colony();
 		ac.start();
 	}

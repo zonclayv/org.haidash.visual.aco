@@ -4,7 +4,7 @@ import org.haidash.visual.aco.algorithm.model.AcoProperties;
 import org.haidash.visual.aco.algorithm.model.Pair;
 import org.haidash.visual.aco.algorithm.model.SearchResult;
 
-public class Generation {
+public class Population {
 
 	// private static final Logger LOGGER = Logger.getLogger(Generation.class);
 
@@ -12,11 +12,11 @@ public class Generation {
 	private final Pair<Double, Double>[][] pheromones;
 	private final int[][] nodeVisits;
 
-	private SearchResult bestResult;
-
 	private final Colony colony;
 
-	public Generation(final Colony colony) {
+	private SearchResult bestResult;
+
+	public Population(final Colony colony) {
 
 		this.colony = colony;
 
@@ -76,7 +76,7 @@ public class Generation {
 
 		for (int i = 0; i < properties.getNumAnts(); i++) {
 
-			final AbstractAnt ant = new AbstractAnt(this);
+			final Ant ant = new Ant(this);
 			final SearchResult result = ant.search();
 
 			if (result == null) {
