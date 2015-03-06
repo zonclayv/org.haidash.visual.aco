@@ -126,43 +126,43 @@ public class GraphCanvasPane extends ScrollPane {
 
 	public void drawGraph() {
 
-		final AcoProperties properties = AcoProperties.getInstance();
-
-		final int[][] nodesMap = properties.getNodesMap();
-		final Pair<Integer, Integer>[] verticesMap = properties.getVerticesMap();
-
-		final int numNodes = properties.getNumNodes();
-
-		lines = new Line[numNodes][numNodes];
-
-		for (int i = 0; i < numNodes; i++) {
-			for (int j = 0; j < numNodes; j++) {
-
-				if (nodesMap[i][j] <= 0) {
-					continue;
-				}
-
-				Pair<Integer, Integer> from = verticesMap[i];
-				Pair<Integer, Integer> to = verticesMap[j];
-
-				Line line =
-						new Line(from.first * GRID_ITEM_WIDTH, from.second * GRID_ITEM_HEIGHT, to.first * GRID_ITEM_WIDTH, to.second
-								* GRID_ITEM_HEIGHT);
-				line.setFill(null);
-				line.setStroke(Color.GREY);
-				line.setStrokeWidth(1);
-
-				lines[i][j] = line;
-
-				pane.getChildren().add(line);
-			}
-		}
-
-		circles = new Circle[numNodes];
-
-		for (int i = 0; i < verticesMap.length; i++) {
-			createCircle(pane, verticesMap[i], i);
-		}
+		// final AcoProperties properties = AcoProperties.getInstance();
+		//
+		// final int[][] nodesMap = properties.getNodesMap();
+		// final Pair<Integer, Integer>[] verticesMap = properties.getVerticesMap();
+		//
+		// final int numNodes = properties.getNumNodes();
+		//
+		// lines = new Line[numNodes][numNodes];
+		//
+		// for (int i = 0; i < numNodes; i++) {
+		// for (int j = 0; j < numNodes; j++) {
+		//
+		// if (nodesMap[i][j] <= 0) {
+		// continue;
+		// }
+		//
+		// Pair<Integer, Integer> from = verticesMap[i];
+		// Pair<Integer, Integer> to = verticesMap[j];
+		//
+		// Line line =
+		// new Line(from.first * GRID_ITEM_WIDTH, from.second * GRID_ITEM_HEIGHT, to.first * GRID_ITEM_WIDTH, to.second
+		// * GRID_ITEM_HEIGHT);
+		// line.setFill(null);
+		// line.setStroke(Color.GREY);
+		// line.setStrokeWidth(1);
+		//
+		// lines[i][j] = line;
+		//
+		// pane.getChildren().add(line);
+		// }
+		// }
+		//
+		// circles = new Circle[numNodes];
+		//
+		// for (int i = 0; i < verticesMap.length; i++) {
+		// createCircle(pane, verticesMap[i], i);
+		// }
 	}
 
 	private final void fillBackgroud(final Pane pane) {

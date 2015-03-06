@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class AcoProperties {
@@ -20,21 +19,25 @@ public class AcoProperties {
 	}
 
 	private static AcoProperties instance;
-	private final SimpleDoubleProperty alpha = new SimpleDoubleProperty(0.1);
-	private final SimpleDoubleProperty beta = new SimpleDoubleProperty(0.1);
+
+	private final SimpleIntegerProperty alpha = new SimpleIntegerProperty(1);
+	private final SimpleIntegerProperty beta = new SimpleIntegerProperty(3);
 	private final SimpleIntegerProperty q = new SimpleIntegerProperty(20);
-	private double pheromonePersistence = 0.3;
+
+	private final SimpleIntegerProperty numGeneration = new SimpleIntegerProperty(15);
+	private final SimpleIntegerProperty numAnts = new SimpleIntegerProperty(30);
+
+	private double pheromonePersistence = 0.5;
+
 	private int startNode;
 	private int targetNode;
+
 	private int numNodes;
 	private int maxFuel;
-	private final SimpleIntegerProperty numGeneration = new SimpleIntegerProperty(1500);
-	private final SimpleIntegerProperty numAnts = new SimpleIntegerProperty(3000);
+
 	private int[][] nodesMap;
 	private int[] fuelLevels;
 	private int[] remainsFuel;
-
-	private Pair<Integer, Integer>[] verticesMap;
 
 	private AcoProperties() {
 	}
@@ -43,7 +46,7 @@ public class AcoProperties {
 		return alpha.get();
 	}
 
-	public SimpleDoubleProperty getAlphaProperty() {
+	public SimpleIntegerProperty getAlphaProperty() {
 		return alpha;
 	}
 
@@ -51,7 +54,7 @@ public class AcoProperties {
 		return beta.get();
 	}
 
-	public SimpleDoubleProperty getBetaProperty() {
+	public SimpleIntegerProperty getBetaProperty() {
 		return beta;
 	}
 
@@ -111,57 +114,36 @@ public class AcoProperties {
 		return targetNode;
 	}
 
-	public Pair<Integer, Integer>[] getVerticesMap() {
-		return verticesMap;
-	}
-
-	@SuppressWarnings("unchecked")
 	public void initializeValue(final File file) {
-
-		initializeValue(file, true);
-	}
-
-	@SuppressWarnings("unchecked")
-	public void initializeValue(final File file, final boolean dontGraph) {
 
 		try (Scanner text = new Scanner(new FileReader(file))) {
 
-			setNumNodes(text.nextInt());
+			numNodes = text.nextInt();
+			fuelLevels = new int[numNodes];
 
-			setFuelLevels(new int[getNumNodes()]);
-
-			for (int i = 0; i < getNumNodes(); i++) {
-				getFuelLevels()[i] = text.nextInt();
+			for (int i = 0; i < numNodes; i++) {
+				fuelLevels[i] = text.nextInt();
 			}
 
-			setVerticesMap(new Pair[getNumNodes()]);
+			this.nodesMap = new int[numNodes][numNodes];
 
-			if (dontGraph) {
-				for (int i = 0; i < getNumNodes(); i++) {
-					getVerticesMap()[i] = new Pair<>(text.nextInt(), text.nextInt());
+			for (int i = 0; i < numNodes; i++) {
+				for (int j = 0; j < numNodes; j++) {
+					nodesMap[i][j] = -1;
 				}
 			}
 
 			final int numEdges = text.nextInt();
-
-			setNodesMap(new int[getNumNodes()][getNumNodes()]);
-
-			for (int i = 0; i < getNumNodes(); i++) {
-				for (int j = 0; j < getNumNodes(); j++) {
-					getNodesMap()[i][j] = -1;
-				}
-			}
-
 			for (int i = 0; i < numEdges; i++) {
 				final int start = text.nextInt();
 				final int finish = text.nextInt();
 
-				getNodesMap()[start][finish] = text.nextInt();
+				nodesMap[start][finish] = text.nextInt();
 			}
 
-			setMaxFuel(text.nextInt());
-			setStartNode(text.nextInt());
-			setTargetNode(text.nextInt());
+			maxFuel = text.nextInt();
+			startNode = text.nextInt();
+			targetNode = text.nextInt();
 
 		} catch (final FileNotFoundException e) {
 			throw new RuntimeException("Can't find input file", e);
@@ -169,7 +151,7 @@ public class AcoProperties {
 	}
 
 	public void initRemainsFuel() {
-		setRemainsFuel(FloydWarshall.getRemainsFuel(getNumNodes(), getNodesMap(), getFuelLevels(), getMaxFuel(), getTargetNode()));
+		remainsFuel = FloydWarshall.getRemainsFuel(numNodes, nodesMap, fuelLevels, maxFuel, targetNode);
 	}
 
 	public void setAlpha(final double alpha) {
@@ -222,9 +204,5 @@ public class AcoProperties {
 
 	public void setTargetNode(final int targetNode) {
 		this.targetNode = targetNode;
-	}
-
-	public void setVerticesMap(final Pair<Integer, Integer>[] verticesMap) {
-		this.verticesMap = verticesMap;
 	}
 }

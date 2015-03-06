@@ -14,65 +14,82 @@ import org.haidash.visual.aco.algorithm.model.SearchResult;
 
 public class Colony {
 
-    private static final Logger LOGGER = Logger.getLogger(Colony.class);
+	private static final Logger LOGGER = Logger.getLogger(Colony.class);
 	private final Pair<Double, Double>[][] globalPheromones;
-    private final Map<Integer, Cycle> cycles;
+	private final Map<Integer, Cycle> cycles;
 	private final Set<List<Integer>> badPaths;
 
-    private SearchResult searchResult;
+	private int generationIndex;
+	private SearchResult searchResult;
 
-    public Colony() {
-        this.cycles = new HashMap<>();
-        this.badPaths = new HashSet<>();
-        this.globalPheromones = initGlobalPheromones();
-    }
+	public Colony() {
+		this.cycles = new HashMap<>();
+		this.badPaths = new HashSet<>();
+		this.globalPheromones = initGlobalPheromones();
+	}
+
+	public Set<List<Integer>> getBadPaths() {
+		return badPaths;
+	}
+
+	public Map<Integer, Cycle> getCycles() {
+		return cycles;
+	}
+
+	public int getGenerationIndex() {
+		return generationIndex;
+	}
 
 	public Pair<Double, Double>[][] getGlobalPheromones() {
-        return globalPheromones;
-    }
+		return globalPheromones;
+	}
 
-    public SearchResult getSearchResult() {
-        return searchResult;
-    }
+	public SearchResult getSearchResult() {
+		return searchResult;
+	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private Pair<Double, Double>[][] initGlobalPheromones() {
 
-        final AcoProperties properties = AcoProperties.getInstance();
-        final int numNodes = properties.getNumNodes();
+		final AcoProperties properties = AcoProperties.getInstance();
+		final int numNodes = properties.getNumNodes();
 
 		final Pair<Double, Double>[][] result = new Pair[numNodes][numNodes];
 
-        for (int i = 0; i < numNodes; i++) {
-            for (int j = 0; j < numNodes; j++) {
+		for (int i = 0; i < numNodes; i++) {
+			for (int j = 0; j < numNodes; j++) {
 				result[i][j] = new Pair<>(1.0, 1.0);
-            }
-        }
+			}
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    public void start() {
+	public void start() {
 
-        final AcoProperties properties = AcoProperties.getInstance();
+		final AcoProperties properties = AcoProperties.getInstance();
 		properties.initRemainsFuel();
 
-        LOGGER.info("PROCESS START '" + properties.getStartNode() + "' -> '" + properties.getTargetNode() + "'...");
+		LOGGER.info("PROCESS START '" + properties.getStartNode() + "' -> '" + properties.getTargetNode() + "'...");
 
-        final long startTime = System.currentTimeMillis();
+		final long startTime = System.currentTimeMillis();
+		int bestPathGen = 0;
+		for (int i = 0; i < properties.getNumGeneration(); i++) {
 
-        for (int i = 0; i < properties.getNumGeneration(); i++) {
+			generationIndex = i;
 
-			final Generation generation = new Generation(badPaths, cycles, globalPheromones);
+			final Population generation = new Population(this);
 
-			final SearchResult result= generation.start();
+			final SearchResult result = generation.start();
 
-            if (result == null) {
+			if (result == null) {
 				continue;
 			}
 
 			if (searchResult == null) {
 				searchResult = result;
+
+				bestPathGen = i;
 
 				LOGGER.info("New best path("
 						+ (System.currentTimeMillis() - startTime)
@@ -91,6 +108,8 @@ public class Colony {
 			if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
 				searchResult = result;
 
+				bestPathGen = i;
+
 				LOGGER.info("New best path("
 						+ (System.currentTimeMillis() - startTime)
 						+ " ms) "
@@ -99,48 +118,52 @@ public class Colony {
 						+ searchResult.getVisited().toString());
 			}
 
-            updatePheromones();
-        }
+			if ((bestPathGen + 3) < i) {
+				break;
+			}
 
-        final long finishTime = System.currentTimeMillis() - startTime;
+			updatePheromones();
+		}
 
-        LOGGER.info("PROCESS FINISH (" + finishTime + "ms):");
+		final long finishTime = System.currentTimeMillis() - startTime;
 
-        if (searchResult == null) {
-            LOGGER.info("Path not found");
-        } else {
-            LOGGER.info("Best path: " + searchResult.getTotalCost());
+		LOGGER.info("PROCESS FINISH (" + finishTime + "ms):");
+
+		if (searchResult == null) {
+			LOGGER.info("Path not found");
+		} else {
+			LOGGER.info("Best path: " + searchResult.getTotalCost());
 			// LOGGER.info(searchResult.getVisited().toString());
-        }
-    }
+		}
+	}
 
-    private void updatePheromones() {
+	private void updatePheromones() {
 
-        final AcoProperties properties = AcoProperties.getInstance();
-        final int numNodes = properties.getNumNodes();
+		final AcoProperties properties = AcoProperties.getInstance();
+		final int numNodes = properties.getNumNodes();
 
-        for (int i = 0; i < numNodes; i++) {
-            for (int j = 0; j < numNodes; j++) {
+		for (int i = 0; i < numNodes; i++) {
+			for (int j = 0; j < numNodes; j++) {
 
 				final Pair<Double, Double> pheromon = globalPheromones[i][j];
 
-                double pValue = pheromon.first;
-                double nValue = pheromon.second;
+				double pValue = pheromon.first;
+				double nValue = pheromon.second;
 
-                pValue *= 1.0 - properties.getPheromonePersistence();
+				pValue *= 1.0 - properties.getPheromonePersistence();
 
-                if (pValue < 1.0) {
-                    pValue = 1.0;
-                }
+				if (pValue < 1.0) {
+					pValue = 1.0;
+				}
 
-                nValue *= 1.0 - properties.getPheromonePersistence();
+				nValue *= 1.0 - properties.getPheromonePersistence();
 
-                if (nValue < 1.0) {
-                    nValue = 1.0;
-                }
+				if (nValue < 1.0) {
+					nValue = 1.0;
+				}
 
 				globalPheromones[i][j] = new Pair<>(pValue, nValue);
-            }
-        }
-    }
+			}
+		}
+	}
 }

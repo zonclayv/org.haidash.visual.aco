@@ -189,7 +189,7 @@ public class GeneralScene extends Scene {
 		final File file = fileChooser.showOpenDialog(scene.getWindow());
 
 		if ((file != null) && file.getName().endsWith(".txt")) {
-			AcoProperties.getInstance().initializeValue(file, false);
+			AcoProperties.getInstance().initializeValue(file);
 			btnStart.setDisable(false);
 			runItem.setDisable(false);
 		} else {

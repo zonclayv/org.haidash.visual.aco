@@ -1,41 +1,45 @@
 package org.haidash.visual.aco.algorithm;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.haidash.visual.aco.algorithm.model.AcoProperties;
-import org.haidash.visual.aco.algorithm.model.Cycle;
 import org.haidash.visual.aco.algorithm.model.Pair;
 import org.haidash.visual.aco.algorithm.model.SearchResult;
 
-public class Generation {
+public class Population {
 
 	// private static final Logger LOGGER = Logger.getLogger(Generation.class);
-
-	// global
-	private final Set<List<Integer>> badPaths;
-	private final Map<Integer, Cycle> cycles;
-	private final Pair<Double, Double>[][] globalPheromones;
 
 	// local
 	private final Pair<Double, Double>[][] pheromones;
 	private final int[][] nodeVisits;
 
+	private final Colony colony;
+
 	private SearchResult bestResult;
 
-	public Generation(final Set<List<Integer>> badPaths,
-			final Map<Integer, Cycle> cycles,
- final Pair<Double, Double>[][] globalPheromones) {
+	public Population(final Colony colony) {
 
-		// global
-		this.badPaths = badPaths;
-		this.cycles = cycles;
-		this.globalPheromones = globalPheromones;
+		this.colony = colony;
 
 		// local
 		this.nodeVisits = initMatrix();
-		this.pheromones = initPheromones(globalPheromones);
+		this.pheromones = initPheromones();
+	}
+
+	public Colony getColony() {
+		return colony;
+	}
+
+	public Pair<Double, Double>[][] getPheromones() {
+		return pheromones;
+	}
+
+	public int getVisitsCount(final int start, final int finish) {
+		return nodeVisits[start][finish];
+	}
+
+	public void incVisitsCount(final int start, final int finish) {
+		final int count = nodeVisits[start][finish];
+		nodeVisits[start][finish] = count + 1;
 	}
 
 	private int[][] initMatrix() {
@@ -54,11 +58,13 @@ public class Generation {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Pair<Double, Double>[][] initPheromones(final Pair<Double, Double>[][] globalPheromones) {
+	private Pair<Double, Double>[][] initPheromones() {
 
 		final AcoProperties properties = AcoProperties.getInstance();
 		final int numNodes = properties.getNumNodes();
 		final Pair<Double, Double>[][] pheromones = new Pair[numNodes][numNodes];
+
+		final Pair<Double, Double>[][] globalPheromones = colony.getGlobalPheromones();
 
 		for (int i = 0; i < numNodes; i++) {
 			for (int j = 0; j < numNodes; j++) {
@@ -75,11 +81,8 @@ public class Generation {
 
 		for (int i = 0; i < properties.getNumAnts(); i++) {
 
-			final Ant ant = new Ant(badPaths, cycles, nodeVisits, pheromones);
-
+			final Ant ant = new Ant(this);
 			final SearchResult result = ant.search();
-
-			ant.updatePheromones(globalPheromones);
 
 			if (result == null) {
 				continue;

@@ -3,29 +3,13 @@ package org.haidash.visual.aco.algorithm.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FloydWarshall{
+public class FloydWarshall {
 
-	private static List<List<Integer>> costsToMove = new ArrayList<>();
-	private static List<List<Integer>> fuel = new ArrayList<>();
-	private static List<List<Integer>> prevNode = new ArrayList<>();
-	private static List<Integer> remainsFuel = new ArrayList<>();
-
-	private static int[] convertIntegers(List<Integer> integers) {
-		int[] ret = new int[integers.size()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = integers.get(i);
-		}
-		return ret;
-	}
-
-	public static int[] getRemainsFuel(int nodesNumber, int[][] matrix, int[] fuelInNodes, int maxFuel, int targetNode) {
-
-		calculate(nodesNumber, maxFuel, targetNode, matrix, fuelInNodes);
-
-		return convertIntegers(remainsFuel);
-	}
-
-	private static void calculate(int nodesNumber, int maxFuel, int targetNode, int[][] matrix, int[] fuelInNodes) {
+	private static void calculate(final int nodesNumber,
+			final int maxFuel,
+			final int targetNode,
+			final int[][] matrix,
+			final int[] fuelInNodes) {
 
 		final int inf = Integer.MAX_VALUE;
 
@@ -51,6 +35,7 @@ public class FloydWarshall{
 			}
 			prevNode.add(new ArrayList<>(prev));
 		}
+
 		for (int firstNode = 0; firstNode < nodesNumber; firstNode++) {
 			for (int secondNode = 0; secondNode < nodesNumber; secondNode++) {
 
@@ -89,7 +74,7 @@ public class FloydWarshall{
 
 					if ((costsToMove.get(i).get(k) < inf) && (costsToMove.get(k).get(j) < inf)) {
 
-						if (costsToMove.get(i).get(j) > costsToMove.get(i).get(k) + costsToMove.get(k).get(j)) {
+						if (costsToMove.get(i).get(j) > (costsToMove.get(i).get(k) + costsToMove.get(k).get(j))) {
 							prevNode.get(i).set(j, k);
 						}
 
@@ -127,7 +112,31 @@ public class FloydWarshall{
 
 	}
 
-	private static int findPrevVertex(int start, int finish) {
+	private static int[] convertIntegers(final List<Integer> integers) {
+		int[] ret = new int[integers.size()];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = integers.get(i);
+		}
+		return ret;
+	}
+
+	private static int findPrevVertex(final int start, final int finish) {
 		return prevNode.get(start).get(finish);
 	}
+
+	public static int[] getRemainsFuel(final int nodesNumber,
+			final int[][] matrix,
+			final int[] fuelInNodes,
+			final int maxFuel,
+			final int targetNode) {
+
+		calculate(nodesNumber, maxFuel, targetNode, matrix, fuelInNodes);
+
+		return convertIntegers(remainsFuel);
+	}
+
+	private static List<List<Integer>> costsToMove = new ArrayList<>();
+	private static List<List<Integer>> fuel = new ArrayList<>();
+	private static List<List<Integer>> prevNode = new ArrayList<>();
+	private static List<Integer> remainsFuel = new ArrayList<>();
 }
