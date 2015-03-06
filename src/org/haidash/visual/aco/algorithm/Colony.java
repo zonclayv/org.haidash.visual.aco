@@ -73,7 +73,7 @@ public class Colony {
 		LOGGER.info("PROCESS START '" + properties.getStartNode() + "' -> '" + properties.getTargetNode() + "'...");
 
 		final long startTime = System.currentTimeMillis();
-
+		int bestPathGen = 0;
 		for (int i = 0; i < properties.getNumGeneration(); i++) {
 
 			generationIndex = i;
@@ -88,6 +88,8 @@ public class Colony {
 
 			if (searchResult == null) {
 				searchResult = result;
+
+				bestPathGen = i;
 
 				LOGGER.info("New best path("
 						+ (System.currentTimeMillis() - startTime)
@@ -106,12 +108,18 @@ public class Colony {
 			if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
 				searchResult = result;
 
+				bestPathGen = i;
+
 				LOGGER.info("New best path("
 						+ (System.currentTimeMillis() - startTime)
 						+ " ms) "
 						+ searchResult.getTotalCost()
 						+ " "
 						+ searchResult.getVisited().toString());
+			}
+
+			if ((bestPathGen + 3) < i) {
+				break;
 			}
 
 			updatePheromones();

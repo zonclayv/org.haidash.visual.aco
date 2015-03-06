@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
 
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class AcoProperties {
@@ -21,14 +20,14 @@ public class AcoProperties {
 
 	private static AcoProperties instance;
 
-	private final SimpleDoubleProperty alpha = new SimpleDoubleProperty(0.1);
-	private final SimpleDoubleProperty beta = new SimpleDoubleProperty(0.1);
+	private final SimpleIntegerProperty alpha = new SimpleIntegerProperty(1);
+	private final SimpleIntegerProperty beta = new SimpleIntegerProperty(3);
 	private final SimpleIntegerProperty q = new SimpleIntegerProperty(20);
 
 	private final SimpleIntegerProperty numGeneration = new SimpleIntegerProperty(15);
 	private final SimpleIntegerProperty numAnts = new SimpleIntegerProperty(30);
 
-	private double pheromonePersistence = 0.3;
+	private double pheromonePersistence = 0.5;
 
 	private int startNode;
 	private int targetNode;
@@ -47,7 +46,7 @@ public class AcoProperties {
 		return alpha.get();
 	}
 
-	public SimpleDoubleProperty getAlphaProperty() {
+	public SimpleIntegerProperty getAlphaProperty() {
 		return alpha;
 	}
 
@@ -55,7 +54,7 @@ public class AcoProperties {
 		return beta.get();
 	}
 
-	public SimpleDoubleProperty getBetaProperty() {
+	public SimpleIntegerProperty getBetaProperty() {
 		return beta;
 	}
 

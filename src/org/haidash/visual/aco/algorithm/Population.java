@@ -29,12 +29,17 @@ public class Population {
 		return colony;
 	}
 
-	public int[][] getNodeVisits() {
-		return nodeVisits;
-	}
-
 	public Pair<Double, Double>[][] getPheromones() {
 		return pheromones;
+	}
+
+	public int getVisitsCount(final int start, final int finish) {
+		return nodeVisits[start][finish];
+	}
+
+	public void incVisitsCount(final int start, final int finish) {
+		final int count = nodeVisits[start][finish];
+		nodeVisits[start][finish] = count + 1;
 	}
 
 	private int[][] initMatrix() {

@@ -4,8 +4,8 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -71,7 +71,7 @@ public class SettingsBox extends VBox {
 		setAlignment(Pos.TOP_CENTER);
 	}
 
-	private Slider createDoubleSlider(final Pane parent, final String name, final DoubleProperty property) {
+	private Slider createDoubleSlider(final Pane parent, final String name, final SimpleIntegerProperty property) {
 
 		double prefWidth = parent.getPrefWidth();
 
@@ -80,8 +80,8 @@ public class SettingsBox extends VBox {
 		label.setPrefWidth(prefWidth * 0.2);
 		label.setAlignment(Pos.CENTER_LEFT);
 
-		final Slider slider = new Slider(0.1, 1, 0.1);
-		slider.setBlockIncrement(0.1);
+		final Slider slider = new Slider(1, 5, property.get());
+		slider.setBlockIncrement(1);
 		slider.setPrefWidth(prefWidth * 0.65);
 		slider.setPrefHeight(25);
 

@@ -143,7 +143,6 @@ public class Ant {
 		final int[][] nodesMap = properties.getNodesMap();
 		final int[] remainsFuel = properties.getRemainsFuel();
 
-		final int[][] nodeVisits = population.getNodeVisits();
 		final Cycle cycle = colony.getCycles().get(currentNode);
 
 		double sum = -1.0;
@@ -151,7 +150,7 @@ public class Ant {
 		for (int nextNode = 0; nextNode < properties.getNumNodes(); nextNode++) {
 
 			final int fuelCost = nodesMap[currentNode][nextNode];
-			final int visitCount = nodeVisits[currentNode][nextNode];
+			final int visitCount = population.getVisitsCount(currentNode, nextNode);
 
 			if ((fuelCost <= 0) || (countNumberEqual(visited, nextNode) >= 3)) {
 				continue;
@@ -176,29 +175,35 @@ public class Ant {
 				}
 			}
 
-			final double etaVisits = visitCount == 0 ? 1.0 : (1 / (double) visitCount);
-			final double etaCost = fuelCost == 1 ? 1 : 1 - (1 / (double) fuelCost);
+			final double etaVisits = visitCount == 0 ? 1.0 : (1 / Math.pow(visitCount, properties.getBeta()));
+			final double etaCost = 1 / Math.pow(fuelCost, properties.getBeta());
 
 			double etaRemaning;
 
 			final double k = (availableFuel - fuelCost) + remainsFuel[nextNode];
 
 			if (k > 0) {
-				etaRemaning = k == 1 ? 1.1 : (1 + 1) - (1 / k);
+				etaRemaning = 1 / k;
 			} else if (k < 0) {
-				etaRemaning = k == -1 ? 0.9 : 1 - (1 / Math.abs(k));
+				double tempK = 1 / Math.pow(Math.abs(k), properties.getBeta());
+				tempK = tempK == 1 ? 0 : tempK;
+				etaRemaning = -1 * (1 - tempK);
 			} else {
-				etaRemaning = 2;
+				etaRemaning = 1;
 			}
 
-			final double eta = (0.1 * etaCost) + (0.5 * etaRemaning * 0.8 * etaVisits);
+			double eta = etaCost + etaRemaning + etaVisits;
+			if (eta < 0) {
+				eta = 1;
+			}
+
 			final double tau = getTau(currentNode, nextNode);
 
 			if (sum == -1.0) {
 				sum = getSumProbabilities(currentNode, cycle, availableFuel);
 			}
 
-			final double probability = (100 * Math.pow(tau, properties.getAlpha()) * Math.pow(eta, properties.getBeta())) / sum;
+			final double probability = 100 * ((Math.pow(tau, properties.getAlpha()) * eta) / sum);
 
 			// LOGGER.debug("Chance "
 			// + currentNode
@@ -252,14 +257,12 @@ public class Ant {
 		final int[][] nodesMap = properties.getNodesMap();
 		final int[] remainsFuel = properties.getRemainsFuel();
 
-		final int[][] nodeVisits = population.getNodeVisits();
-
 		double sum = 0.0;
 
 		for (int nextNode = 0; nextNode < numNodes; nextNode++) {
 
 			final double fuelCost = nodesMap[currentNode][nextNode];
-			final int visitCount = nodeVisits[currentNode][nextNode];
+			final int visitCount = population.getVisitsCount(currentNode, nextNode);
 
 			if ((fuelCost <= 0) || (countNumberEqual(visited, nextNode) >= 2)) {
 				continue;
@@ -284,25 +287,31 @@ public class Ant {
 				}
 			}
 
-			final double etaVisits = visitCount == 0 ? 1.0 : (1 / (double) visitCount);
-			final double etaCost = fuelCost == 1 ? 1 : 1 - (1 / fuelCost);
+			final double etaVisits = visitCount == 0 ? 1.0 : (1 / Math.pow(visitCount, properties.getBeta()));
+			final double etaCost = 1 / Math.pow(fuelCost, properties.getBeta());
 
 			double etaRemaning;
 
 			final double k = (availableFuel - fuelCost) + remainsFuel[nextNode];
 
 			if (k > 0) {
-				etaRemaning = k == 1 ? 1.1 : (1 + 1) - (1 / k);
+				etaRemaning = 1 / k;
 			} else if (k < 0) {
-				etaRemaning = k == -1 ? 0.9 : 1 - (1 / Math.abs(k));
+				double tempK = 1 / Math.pow(Math.abs(k), properties.getBeta());
+				tempK = tempK == 1 ? 0 : tempK;
+				etaRemaning = -1 * (1 - tempK);
 			} else {
-				etaRemaning = 2;
+				etaRemaning = 1;
 			}
 
-			final double eta = (0.1 * etaCost) + (0.5 * etaRemaning * 0.8 * etaVisits);
+			double eta = etaCost + etaRemaning + etaVisits;
+			if (eta < 0) {
+				eta = 1;
+			}
+
 			final double tau = getTau(currentNode, nextNode);
 
-			sum += pow(tau, properties.getAlpha()) * pow(eta, properties.getBeta());
+			sum += pow(tau, properties.getAlpha()) * eta;
 		}
 
 		return sum;
@@ -329,9 +338,7 @@ public class Ant {
 		totalCost += usedFuel;
 
 		// 3
-		final int[][] nodeVisits = population.getNodeVisits();
-		final int count = nodeVisits[currentNode][next];
-		nodeVisits[currentNode][next] = count + 1;
+		population.incVisitsCount(currentNode, next);
 	}
 
 	private boolean isBadPath(final List<Integer> visits, final int nextNode) {
