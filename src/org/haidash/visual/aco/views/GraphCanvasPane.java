@@ -6,14 +6,10 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -23,9 +19,6 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
-
-import org.haidash.visual.aco.algorithm.model.AcoProperties;
-import org.haidash.visual.aco.algorithm.model.Pair;
 
 /**
  * Author Aleh Haidash.
@@ -62,61 +55,61 @@ public class GraphCanvasPane extends ScrollPane {
 		setContent(pane);
 	}
 
-	private void changeVertexStatus(final MouseEvent event, final Circle circle) {
-		final AcoProperties properties = AcoProperties.getInstance();
+	// private void changeVertexStatus(final MouseEvent event, final Circle circle) {
+	// final Properties properties = Properties.getInstance();
+	//
+	// final int numNodes = properties.getNumNodes();
+	//
+	// Object userData = circle.getUserData();
+	//
+	// if (!(userData instanceof Integer)) {
+	// return;
+	// }
+	//
+	// int number = (int) userData;
+	//
+	// MouseButton button = event.getButton();
+	//
+	// if (button.equals(MouseButton.PRIMARY)) {
+	// properties.setStartNode(number);
+	//
+	// if (number == properties.getTargetNode()) {
+	// properties.setTargetNode(-1);
+	// }
+	// } else if (button.equals(MouseButton.SECONDARY)) {
+	// properties.setTargetNode(number);
+	//
+	// if (number == properties.getStartNode()) {
+	// properties.setStartNode(-1);
+	// }
+	// }
+	//
+	// for (int i = 0; i < numNodes; i++) {
+	// fillCircle(i);
+	// }
+	// }
 
-		final int numNodes = properties.getNumNodes();
-
-		Object userData = circle.getUserData();
-
-		if (!(userData instanceof Integer)) {
-			return;
-		}
-
-		int number = (int) userData;
-
-		MouseButton button = event.getButton();
-
-		if (button.equals(MouseButton.PRIMARY)) {
-			properties.setStartNode(number);
-
-			if (number == properties.getTargetNode()) {
-				properties.setTargetNode(-1);
-			}
-		} else if (button.equals(MouseButton.SECONDARY)) {
-			properties.setTargetNode(number);
-
-			if (number == properties.getStartNode()) {
-				properties.setStartNode(-1);
-			}
-		}
-
-		for (int i = 0; i < numNodes; i++) {
-			fillCircle(i);
-		}
-	}
-
-	private void createCircle(final Pane parent, final Pair<Integer, Integer> vertex, final int number) {
-
-		Text text = createText(String.valueOf(number));
-
-		final Circle circle = new Circle();
-		circle.setRadius(10);
-		circle.setUserData(number);
-
-		circles[number] = circle;
-
-		fillCircle(number);
-
-		StackPane layout = new StackPane();
-		layout.setLayoutX((vertex.first * GRID_ITEM_WIDTH) - 10);
-		layout.setLayoutY((vertex.second * GRID_ITEM_HEIGHT) - 10);
-		layout.setCursor(Cursor.HAND);
-		layout.setOnMouseClicked((final MouseEvent event) -> changeVertexStatus(event, circle));
-		layout.getChildren().addAll(circle, text);
-
-		parent.getChildren().add(layout);
-	}
+	// private void createCircle(final Pane parent, final Pair<Integer, Integer> vertex, final int number) {
+	//
+	// Text text = createText(String.valueOf(number));
+	//
+	// final Circle circle = new Circle();
+	// circle.setRadius(10);
+	// circle.setUserData(number);
+	//
+	// circles[number] = circle;
+	//
+	// fillCircle(number);
+	//
+	// StackPane layout = new StackPane();
+	// layout.setLayoutX((vertex.first * GRID_ITEM_WIDTH) - 10);
+	// layout.setLayoutY((vertex.second * GRID_ITEM_HEIGHT) - 10);
+	// layout.setCursor(Cursor.HAND);
+	// layout.setOnMouseClicked((final MouseEvent event) -> changeVertexStatus(event, circle));
+	// layout.getChildren().addAll(circle, text);
+	//
+	// parent.getChildren().add(layout);
+	// }
 
 	private Text createText(final String string) {
 		Text text = new Text(string);
@@ -188,26 +181,26 @@ public class GraphCanvasPane extends ScrollPane {
 		pane.getChildren().addAll(new Node[] { verticalGridLines, horizontalGridLines });
 	}
 
-	private void fillCircle(final int i) {
-
-		final AcoProperties properties = AcoProperties.getInstance();
-
-		final int startNode = properties.getStartNode();
-		final int targetNode = properties.getTargetNode();
-
-		Circle circle = circles[i];
-
-		if (i == startNode) {
-			circle.setStroke(Color.GREY);
-			circle.setFill(Color.GREEN);
-		} else if (i == targetNode) {
-			circle.setStroke(Color.GREY);
-			circle.setFill(Color.RED);
-		} else {
-			circle.setStroke(Color.GREY);
-			circle.setFill(Color.WHITESMOKE);
-		}
-	}
+	// private void fillCircle(final int i) {
+	//
+	// final AcoProperties properties = AcoProperties.getInstance();
+	//
+	// final int startNode = properties.getStartNode();
+	// final int targetNode = properties.getTargetNode();
+	//
+	// Circle circle = circles[i];
+	//
+	// if (i == startNode) {
+	// circle.setStroke(Color.GREY);
+	// circle.setFill(Color.GREEN);
+	// } else if (i == targetNode) {
+	// circle.setStroke(Color.GREY);
+	// circle.setFill(Color.RED);
+	// } else {
+	// circle.setStroke(Color.GREY);
+	// circle.setFill(Color.WHITESMOKE);
+	// }
+	// }
 
 	public void markPath(final List<Integer> visitedNodes) {
 

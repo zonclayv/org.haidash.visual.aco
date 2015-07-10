@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.algorithm.model;
+package org.haidash.visual.aco.oop;
 
 import org.apache.log4j.Logger;
 
@@ -13,12 +13,17 @@ public class AcoRuntimeException extends RuntimeException {
 		LOGGER.error("Aco runtime exception");
 	}
 
+	public AcoRuntimeException(final String message) {
+		super(message);
+		LOGGER.error(message);
+	}
+
 	public AcoRuntimeException(final String message, final Throwable cause) {
 		super(message, cause);
 		LOGGER.error(message, cause);
 	}
 
-	public AcoRuntimeException(Throwable cause) {
+	public AcoRuntimeException(final Throwable cause) {
 		super(cause);
 		LOGGER.error(cause.getMessage(), cause);
 	}

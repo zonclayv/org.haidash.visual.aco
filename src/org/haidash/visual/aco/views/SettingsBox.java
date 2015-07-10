@@ -17,7 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import org.haidash.visual.aco.algorithm.model.AcoProperties;
+import org.haidash.visual.aco.oop.entity.Properties;
 
 /**
  * Author Aleh Haidash.
@@ -25,7 +25,7 @@ import org.haidash.visual.aco.algorithm.model.AcoProperties;
 public class SettingsBox extends VBox {
 
 	public static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
-	private final AcoProperties properties = AcoProperties.getInstance();
+	private final Properties properties = Properties.getInstance();
 
 	public SettingsBox(final Scene scene, final GraphCanvasPane canvasPane) {
 
@@ -44,14 +44,14 @@ public class SettingsBox extends VBox {
 
 		addSeparator(this);
 
-		createIntSlider(this, "Q", properties.getQProperty());
-		createDoubleSlider(this, "Alpha", properties.getAlphaProperty());
-		createDoubleSlider(this, "Beta", properties.getBetaProperty());
+		createIntSlider(this, "Q", properties.getQ());
+		createDoubleSlider(this, "Alpha", properties.getAlpha());
+		createDoubleSlider(this, "Beta", properties.getBeta());
 
 		addSeparator(this);
 
-		createIntSlider(this, "Ants", properties.getNumAntsProperty());
-		createIntSlider(this, "Gen", properties.getNumGenerationProperty());
+		createIntSlider(this, "Ants", properties.getNumAnts());
+		createIntSlider(this, "Gen", properties.getNumGeneration());
 	}
 
 	private void addSeparator(final VBox firstVBox) {

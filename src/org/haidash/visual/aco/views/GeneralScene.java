@@ -27,15 +27,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 
-import org.haidash.visual.aco.algorithm.Colony;
-import org.haidash.visual.aco.algorithm.model.AcoProperties;
+import org.apache.log4j.Logger;
+import org.haidash.visual.aco.oop.AntColonyOptimization;
+import org.haidash.visual.aco.oop.InputFileReader;
+import org.haidash.visual.aco.oop.entity.Graph;
+import org.haidash.visual.aco.oop.entity.Properties;
+import org.haidash.visual.aco.oop.impl.Colony;
 
 /**
  * Author Aleh Haidash.
  */
 public class GeneralScene extends Scene {
 
-	// private final static Logger LOGGER = Logger.getLogger(GeneralScene.class);
+	private final static Logger LOGGER = Logger.getLogger(GeneralScene.class);
 
 	private final Group group;
 
@@ -47,6 +51,8 @@ public class GeneralScene extends Scene {
 	private Button btnBrowse;
 
 	private MenuItem runItem;
+
+	private File inputFile;
 
 	public GeneralScene(final Group group, final double v, final double v1) {
 		super(group, v, v1);
@@ -143,11 +149,20 @@ public class GeneralScene extends Scene {
 	private void findPath() {
 		textLog.setText("");
 
+		final Graph graph = new Graph();
+		final Properties properties = Properties.getInstance();
+
+		final InputFileReader fileReader = new InputFileReader();
+		fileReader.readGraph(graph, properties, inputFile);
+
+		LOGGER.info("Graph initialized...");
+
 		new Thread(() -> {
 			try {
-				Colony ac = new Colony();
-				ac.start();
+				AntColonyOptimization ac = new Colony();
+				ac.run(graph);
 			} catch (final Throwable t) {
+				LOGGER.info(t.getMessage(), t);
 			}
 		}).start();
 
@@ -189,7 +204,8 @@ public class GeneralScene extends Scene {
 		final File file = fileChooser.showOpenDialog(scene.getWindow());
 
 		if ((file != null) && file.getName().endsWith(".txt")) {
-			AcoProperties.getInstance().initializeValue(file);
+			inputFile = file;
+
 			btnStart.setDisable(false);
 			runItem.setDisable(false);
 		} else {
