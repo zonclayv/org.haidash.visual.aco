@@ -41,7 +41,7 @@ public class GraphCanvasPane extends ScrollPane {
 		prefWidthProperty().bind(scene.widthProperty().subtract(250));
 
 		pane = new Pane();
-		pane.getStyleClass().setAll(new String[] { "chart-plot-background" });
+		pane.getStyleClass().setAll("chart-plot-background");
 
 		pane.prefHeightProperty().bind(heightProperty().subtract(5));
 		pane.prefWidthProperty().bind(widthProperty().subtract(5));

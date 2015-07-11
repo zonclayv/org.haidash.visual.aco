@@ -1,141 +1,140 @@
 package org.haidash.visual.aco.oop.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
 import org.haidash.visual.aco.oop.Agentable;
 import org.haidash.visual.aco.oop.AntColonyOptimization;
-import org.haidash.visual.aco.oop.entity.FloydWarshall;
-import org.haidash.visual.aco.oop.entity.Graph;
-import org.haidash.visual.aco.oop.entity.Link;
-import org.haidash.visual.aco.oop.entity.Properties;
-import org.haidash.visual.aco.oop.entity.SearchResult;
+import org.haidash.visual.aco.oop.entity.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Colony implements AntColonyOptimization {
 
-	private final static Logger LOGGER = Logger.getLogger(Colony.class);
-	private final static Properties properties = Properties.getInstance();
+    private final static Logger LOGGER = Logger.getLogger(Colony.class);
+    private final static Properties properties = Properties.getInstance();
 
-	private SearchResult getBestResult(final SearchResult globalResult, final SearchResult localResult, final int populationIndex) {
-		if (globalResult == null) {
+    private SearchResult getBestResult(final SearchResult globalResult, final SearchResult localResult, final int populationIndex) {
 
-			if (localResult != null) {
-				LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
+        if (globalResult == null) {
 
-			}
+            if (localResult != null) {
+                LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
+            }
 
-			return localResult;
-		}
+            return localResult;
+        }
 
-		if (localResult == null) {
-			return globalResult;
-		}
+        if (localResult == null) {
+            return globalResult;
+        }
 
-		boolean isBestTotalCost = localResult.getTotalCost() < globalResult.getTotalCost();
-		boolean isEqualsTotalCost = localResult.getTotalCost() == globalResult.getTotalCost();
-		boolean isLessNodes = localResult.getPath().size() < globalResult.getPath().size();
+        boolean isBestTotalCost = localResult.getTotalCost() < globalResult.getTotalCost();
+        boolean isEqualsTotalCost = localResult.getTotalCost() == globalResult.getTotalCost();
+        boolean isLessNodes = localResult.getPath().size() < globalResult.getPath().size();
 
-		if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
-			LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
+        if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
+            LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
 
-			return localResult;
-		}
+            return localResult;
+        }
 
-		return globalResult;
-	}
+        return globalResult;
+    }
 
-	@Override
-	public void run(final Graph graph) {
-		SearchResult globalResult = null;
+    @Override
+    public void run(final Graph graph) {
 
-		LOGGER.info("PROCESS START '" + graph.getStartNode() + "' -> '" + graph.getTargetNode() + "'...");
+        SearchResult globalResult = null;
 
-		final long startTime = System.currentTimeMillis();
+        LOGGER.info("PROCESS START '" + graph.getStartNode() + "' -> '" + graph.getTargetNode() + "'...");
 
-		final List<Integer> remainsFuel = FloydWarshall.getRemainsFuel(graph, properties.getMaxFuelLevels());
+        final long startTime = System.currentTimeMillis();
 
-		LOGGER.info("FloydWarshall initialized...");
+        final IntArrayList remainsFuel = FloydWarshall.getRemainsFuel(graph, properties.getMaxFuelLevels());
 
-		for (int i = 0; i < properties.getNumGeneration().get(); i++) {
+        LOGGER.info("FloydWarshall initialized...");
 
-			final SearchResult localResult = runPopulation(graph, remainsFuel, i);
+        for (int i = 0; i < properties.getNumGeneration().get(); i++) {
 
-			globalResult = getBestResult(globalResult, localResult, i);
-		}
+            final SearchResult localResult = runPopulation(graph, remainsFuel, i);
 
-		final long finishTime = System.currentTimeMillis() - startTime;
+            globalResult = getBestResult(globalResult, localResult, i);
+        }
 
-		LOGGER.info("PROCESS FINISH (" + finishTime + "ms):");
+        final long finishTime = System.currentTimeMillis() - startTime;
 
-		if (globalResult == null) {
-			LOGGER.info("Path not found");
-		} else {
-			LOGGER.info("Best path: " + globalResult.getTotalCost());
-		}
-	}
+        LOGGER.info("PROCESS FINISH (" + finishTime + "ms):");
 
-	private SearchResult runPopulation(final Graph graph, final List<Integer> remainsFuel, final int populationIndex) {
-		final int numAnts = properties.getNumAnts().get();
-		List<Agentable> ants = new ArrayList<>(numAnts);
+        if (globalResult == null) {
+            LOGGER.info("Path not found");
+        } else {
+            LOGGER.info("Best path: " + globalResult.getTotalCost());
+        }
+    }
 
-		for (int i = 0; i < numAnts; i++) {
-			Ant ant = new Ant(graph, remainsFuel);
-			ant.setCurentNode(graph.getStartNode());
-			ants.add(ant);
-			ant.run();
-		}
+    private SearchResult runPopulation(final Graph graph, final IntArrayList remainsFuel, final int populationIndex) {
 
-		SearchResult searchResult = null;
+        final int numAnts = properties.getNumAnts().get();
 
-		for (Agentable agent : ants) {
+        final List<Agentable> ants = new ArrayList<>(numAnts);
 
-			updatePheromones(agent);
+        for (int i = 0; i < numAnts; i++) {
+            Ant ant = new Ant(graph, remainsFuel);
+            ant.setCurrentNode(graph.getStartNode());
+            ants.add(ant);
+            ant.run();
+        }
 
-			if (agent.isOutOfFuel()) {
-				// LOGGER.debug("Out of fuel " + agent.getPath());
+        SearchResult searchResult = null;
 
-				continue;
-			}
+        for (Agentable agent : ants) {
 
-			// LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
+            updatePheromones(agent);
 
-			if ((searchResult == null)
-					|| ((agent.getTotalCost() < searchResult.getTotalCost()) || ((agent.getTotalCost() == searchResult.getTotalCost()) && (agent
-							.getPath().size() < searchResult.getPath().size())))) {
+            if (agent.isOutOfFuel()) {
+//                LOGGER.debug("Out of fuel " + agent.getPath());
 
-				searchResult = new SearchResult(agent);
+                continue;
+            }
 
-				continue;
-			}
-		}
+//            LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
 
-		return searchResult;
-	}
+            if ((searchResult == null)
+                    || ((agent.getTotalCost() < searchResult.getTotalCost()) || ((agent.getTotalCost() == searchResult.getTotalCost()) && (agent
+                    .getPath().size() < searchResult.getPath().size())))) {
 
-	@Override
-	public void updatePheromones(final Agentable agent) {
-		final List<Link> path = agent.getPath();
+                searchResult = new SearchResult(agent);
+            }
+        }
 
-		double deltaTau = 0;
+        return searchResult;
+    }
 
-		if (agent.getTotalCost() != 0) {
-			deltaTau = properties.getQ().get() / agent.getTotalCost();
-		}
+    @Override
+    public void updatePheromones(final Agentable agent) {
 
-		for (Link link : path) {
+        final List<Link> path = agent.getPath();
 
-			double pValue = link.getpPheromone();
-			double nValue = link.getnPheromone();
+        double deltaTau = 0;
 
-			if (!agent.isOutOfFuel()) {
-				pValue += deltaTau;
-				link.setpPheromone(pValue);
-			} else {
-				nValue += deltaTau;
-				link.setnPheromone(nValue);
-			}
-		}
-	}
+        if (agent.getTotalCost() != 0) {
+            deltaTau = properties.getQ().get() / agent.getTotalCost();
+        }
+
+        for (Link link : path) {
+
+            double pValue = link.getPPheromone();
+            double nValue = link.getNPheromone();
+
+            if (!agent.isOutOfFuel()) {
+                pValue += deltaTau;
+                link.setPPheromone(pValue);
+            } else {
+                nValue += deltaTau;
+                link.setNPheromone(nValue);
+            }
+        }
+    }
 
 }

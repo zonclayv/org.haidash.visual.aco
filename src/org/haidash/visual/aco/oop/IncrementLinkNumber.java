@@ -1,57 +1,53 @@
 package org.haidash.visual.aco.oop;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.Scanner;
-
 
 
 public class IncrementLinkNumber {
 
-	public static void main(final String[] args) {
-		writeNewFile(new File("files/by.txt"));
-	}
+    public static void main(final String[] args) {
+        writeNewFile(new File("files/by.txt"));
+    }
 
-	public static void writeNewFile(final File file) {
-		if ((file == null) || !file.exists()) {
-			throw new AcoRuntimeException("Input file not fount");
-		}
+    public static void writeNewFile(final File file) {
 
-		try (Scanner text = new Scanner(new FileReader(file))) {
+        if ((file == null) || !file.exists()) {
+            throw new AcoRuntimeException("Input file not fount");
+        }
 
-			final int graphSize = text.nextInt();
+        try (Scanner text = new Scanner(new FileReader(file))) {
 
-			for (int i = 0; i < graphSize; i++) {
-				final int fuel = text.nextInt();
-			}
+            final int graphSize = text.nextInt();
 
-			final int linksSize = text.nextInt();
+            for (int i = 0; i < graphSize; i++) {
+                final int fuel = text.nextInt();
+            }
 
-			File outputFile = new File("files/new/file" + System.currentTimeMillis() + ".txt");
-			outputFile.createNewFile();
+            final int linksSize = text.nextInt();
 
-			try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));) {
+            final File outputFile = new File("files/new/file" + System.currentTimeMillis() + ".txt");
+            outputFile.createNewFile();
 
-			for (int i = 0; i < linksSize; i++) {
-				final int start = text.nextInt();
-				final int finish = text.nextInt();
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));) {
 
-				int fuelCost = text.nextInt();
-					bw.write((start + graphSize) + " " + (finish + graphSize) + " " + fuelCost + "\n");
-				}
+                for (int i = 0; i < linksSize; i++) {
+                    final int start = text.nextInt();
+                    final int finish = text.nextInt();
 
-			} catch (IOException e) {
-				throw new AcoRuntimeException("Error via write file", e);
-			}
+                    int fuelCost = text.nextInt();
 
-		} catch (final FileNotFoundException e) {
-			throw new AcoRuntimeException("Input file is inccorect", e);
-		} catch (IOException e) {
-			throw new AcoRuntimeException("Error via write file", e);
-		}
-	}
+                    bw.write((start + graphSize) + " " + (finish + graphSize) + " " + fuelCost + "\n");
+                }
+
+            } catch (IOException e) {
+                throw new AcoRuntimeException("Error via write file", e);
+            }
+
+        } catch (final FileNotFoundException e) {
+            throw new AcoRuntimeException("Input file is incorrect", e);
+        } catch (IOException e) {
+            throw new AcoRuntimeException("Error via write file", e);
+        }
+    }
 }

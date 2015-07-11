@@ -1,145 +1,145 @@
 package org.haidash.visual.aco.oop.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.carrotsearch.hppc.IntArrayList;
+
+import java.util.*;
 
 public class Graph {
 
-	private int graphSize;
+    private int graphSize;
 
-	private Node startNode;
-	private Node targetNode;
+    private Node startNode;
+    private Node targetNode;
 
-	private List<Integer> fuelLevels;
+    private IntArrayList fuelLevels;
 
-	private List<Link> links;
-	private List<Node> nodes;
+    private List<Link> links;
+    private List<Node> nodes;
 
-	private final Map<Node, Cycle> cycles = new HashMap<>();
-	private final Set<List<Link>> badPaths = new HashSet<>();
+    private final Map<Node, Cycle> cycles = new HashMap<>();
+    private final Set<List<Link>> badPaths = new HashSet<>();
 
-	public void addCycle(final Cycle cycle) {
+    public void addCycle(final Cycle cycle) {
 
-		if (cycles == null) {
-			return;
-		}
+        if (cycles == null) {
+            return;
+        }
 
-		final Cycle oldCycle = cycles.get(cycle.getStartNode());
+        final Cycle oldCycle = cycles.get(cycle.getStartNode());
 
-		if (oldCycle != null) {
-			final int oldCycleFuel = oldCycle.getFuel();
-			final int cycleFuel = cycle.getFuel();
+        if (oldCycle != null) {
 
-			if ((oldCycleFuel > cycleFuel)) {
-				return;
-			}
+            final int oldCycleFuel = oldCycle.getFuel();
+            final int cycleFuel = cycle.getFuel();
 
-			if (!((oldCycleFuel == cycleFuel) && (oldCycle.getLinks().size() > cycle.getLinks().size()))) {
-				return;
-			}
-		}
+            if ((oldCycleFuel > cycleFuel)) {
+                return;
+            }
 
-		cycles.put(cycle.getStartNode(), cycle);
-	}
+            if (!((oldCycleFuel == cycleFuel) && (oldCycle.getLinks().size() > cycle.getLinks().size()))) {
+                return;
+            }
+        }
 
-	public Set<List<Link>> getBadPaths() {
-		return badPaths;
-	}
+        cycles.put(cycle.getStartNode(), cycle);
+    }
 
-	public Map<Node, Cycle> getCycles() {
-		return cycles;
-	}
+    public Set<List<Link>> getBadPaths() {
+        return badPaths;
+    }
 
-	public List<Integer> getFuelLevels() {
-		return fuelLevels;
-	}
+    public Map<Node, Cycle> getCycles() {
+        return cycles;
+    }
 
-	public int getGraphSize() {
-		return graphSize;
-	}
+    public IntArrayList getFuelLevels() {
+        return fuelLevels;
+    }
 
-	public List<Link> getLinks() {
-		return links;
-	}
+    public int getGraphSize() {
+        return graphSize;
+    }
 
-	public List<Node> getNodes() {
-		return nodes;
-	}
+    public List<Link> getLinks() {
+        return links;
+    }
 
-	public Node getStartNode() {
-		return startNode;
-	}
+    public List<Node> getNodes() {
+        return nodes;
+    }
 
-	public Node getTargetNode() {
-		return targetNode;
-	}
+    public Node getStartNode() {
+        return startNode;
+    }
 
-	public boolean isBadPath(final List<Link> path, final Link nextArc) {
-		if (badPaths == null) {
-			return false;
-		}
+    public Node getTargetNode() {
+        return targetNode;
+    }
 
-		final List<Link> nodes = new ArrayList<>(path);
-		nodes.add(nextArc);
+    public boolean isBadPath(final List<Link> path, final Link nextArc) {
 
-		return badPaths.contains(nodes);
-	}
+        if (badPaths == null) {
+            return false;
+        }
 
-	public boolean isBadPath(final List<Link> path, final List<Link> cycleArcs, final Link nextArc) {
-		if (badPaths == null) {
-			return false;
-		}
+        final List<Link> nodes = new ArrayList<>(path);
+        nodes.add(nextArc);
 
-		final List<Link> nodes = new ArrayList<>(path);
-		nodes.addAll(cycleArcs);
-		nodes.add(nextArc);
+        return badPaths.contains(nodes);
+    }
 
-		return badPaths.contains(nodes);
-	}
+    public boolean isBadPath(final List<Link> path, final List<Link> cycleArcs, final Link nextArc) {
 
-	public void setFuelLevels(final List<Integer> fuelLevels) {
-		this.fuelLevels = fuelLevels;
-	}
+        if (badPaths == null) {
+            return false;
+        }
 
-	public void setGraphSize(final int graphSize) {
-		this.graphSize = graphSize;
-	}
+        final List<Link> nodes = new ArrayList<>(path);
+        nodes.addAll(cycleArcs);
+        nodes.add(nextArc);
 
-	public void setLinks(final List<Link> links) {
-		this.links = links;
-	}
+        return badPaths.contains(nodes);
+    }
 
-	public void setNodes(final List<Node> nodes) {
-		this.nodes = nodes;
-	}
+    public void setFuelLevels(final IntArrayList fuelLevels) {
+        this.fuelLevels = fuelLevels;
+    }
 
-	public void setStartNode(final Node startNode) {
-		this.startNode = startNode;
-	}
+    public void setGraphSize(final int graphSize) {
+        this.graphSize = graphSize;
+    }
 
-	public void setTargetNode(final Node targetNode) {
-		this.targetNode = targetNode;
-	}
+    public void setLinks(final List<Link> links) {
+        this.links = links;
+    }
 
-	@Override
-	public String toString() {
-		return "Graph size - "
-				+ graphSize
-				+ "\n"
-				+ "Start node - "
-				+ startNode.getNumber()
-				+ "\n"
-				+ "Target node - "
-				+ targetNode.getNumber()
-				+ "\n"
-				+ "Nodes: \n"
-				+ nodes.toString()
-				+ "\n"
-				+ "Arcs: \n"
-				+ links.toString();
-	}
+    public void setNodes(final List<Node> nodes) {
+        this.nodes = nodes;
+    }
+
+    public void setStartNode(final Node startNode) {
+        this.startNode = startNode;
+    }
+
+    public void setTargetNode(final Node targetNode) {
+        this.targetNode = targetNode;
+    }
+
+    @Override
+    public String toString() {
+        return "Graph size - "
+                + graphSize
+                + "\n"
+                + "Start node - "
+                + startNode.getNumber()
+                + "\n"
+                + "Target node - "
+                + targetNode.getNumber()
+                + "\n"
+                + "Nodes: \n"
+                + nodes.toString()
+                + "\n"
+                + "Arcs: \n"
+                + links.toString();
+    }
 }

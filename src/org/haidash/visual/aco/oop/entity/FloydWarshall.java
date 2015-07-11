@@ -1,120 +1,137 @@
 package org.haidash.visual.aco.oop.entity;
 
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntCollection;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Integer.MAX_VALUE;
+
 public class FloydWarshall {
 
-	private static void calculate(final Graph graph, final int maxFuel) {
+    private static void calculate(final Graph graph, final int maxFuel) {
 
-		final int inf = Integer.MAX_VALUE;
+        final int graphSize = graph.getGraphSize();
 
-		final int graphSize = graph.getGraphSize();
+        for (int i = 0; i < graphSize; i++) {
 
-		for (int i = 0; i < graphSize; i++) {
-			List<Integer> line = new ArrayList<>();
-			for (int j = 0; j < graphSize; j++) {
-				if (i != j) {
-					line.add(inf);
-				} else {
-					line.add(0);
-				}
-			}
+            final IntArrayList line = new IntArrayList(graphSize);
 
-			costsToMove.add(new ArrayList<>(line));
-			fuel.add(new ArrayList<>(line));
-			remainsFuel.add(inf);
-		}
+            for (int j = 0; j < graphSize; j++) {
+                if (i != j) {
+                    line.add(MAX_VALUE);
+                } else {
+                    line.add(0);
+                }
+            }
 
-		for (int i = 0; i < graphSize; i++) {
+            costsToMove.add(line);
+            fuel.add(line);
+            remainsFuel.add(MAX_VALUE);
+        }
 
-			List<Integer> prev = new ArrayList<>();
+        for (int i = 0; i < graphSize; i++) {
 
-			for (int j = 0; j < graphSize; j++) {
-				prev.add(i);
-			}
+            final IntArrayList prev = new IntArrayList(graphSize);
 
-			prevNode.add(new ArrayList<>(prev));
-		}
+            for (int j = 0; j < graphSize; j++) {
+                prev.add(i);
+            }
 
-		final List<Link> links = graph.getLinks();
+            prevNode.add(prev);
+        }
 
-		for (Link link : links) {
+        final List<Link> links = graph.getLinks();
 
-			final int firstNodeNum = link.getFirst().getNumber();
-			final int secondNodeNum = link.getSecond().getNumber();
+        for (Link link : links) {
 
-			final int weight = link.getWeight();
+            final int firstNodeNum = link.getFirst().getNumber();
+            final int secondNodeNum = link.getSecond().getNumber();
 
-			if (weight <= maxFuel) {
-				costsToMove.get(firstNodeNum).set(secondNodeNum, weight);
-			}
+            final int weight = link.getWeight();
 
-			Integer fuelBalanse = link.getFirst().getFuelBalance();
+            if (weight <= maxFuel) {
+                costsToMove.get(firstNodeNum).set(secondNodeNum, weight);
+            }
 
-			fuel.get(firstNodeNum).set(secondNodeNum, fuelBalanse > maxFuel ? maxFuel : fuelBalanse);
-		}
+            final int fuelBalance = link.getFirst().getFuelBalance();
+            final int newFuelBalance = fuelBalance > maxFuel ? maxFuel : fuelBalance;
 
-		for (int k = 0; k < graphSize; ++k) {
-			for (int i = 0; i < graphSize; ++i) {
-				for (int j = 0; j < graphSize; ++j) {
+            fuel.get(firstNodeNum).set(secondNodeNum, newFuelBalance);
+        }
 
-					if ((costsToMove.get(i).get(k) < inf) && (costsToMove.get(k).get(j) < inf)) {
+        for (int k = 0; k < graphSize; ++k) {
+            for (int i = 0; i < graphSize; ++i) {
+                for (int j = 0; j < graphSize; ++j) {
 
-						if (costsToMove.get(i).get(j) > (costsToMove.get(i).get(k) + costsToMove.get(k).get(j))) {
-							prevNode.get(i).set(j, k);
-						}
+                    if ((costsToMove.get(i).get(k) < MAX_VALUE) && (costsToMove.get(k).get(j) < MAX_VALUE)) {
 
-						costsToMove.get(i).set(j,
-								Math.min(costsToMove.get(i).get(j), costsToMove.get(i).get(k) + costsToMove.get(k).get(j)));
+                        if (costsToMove.get(i).get(j) > (costsToMove.get(i).get(k) + costsToMove.get(k).get(j))) {
+                            prevNode.get(i).set(j, k);
+                        }
 
-					}
+                        final int minCost = Math.min(costsToMove.get(i).get(j), costsToMove.get(i).get(k) + costsToMove.get(k).get(j));
 
-					if ((fuel.get(i).get(k) < inf) && (fuel.get(k).get(j) < inf)) {
+                        costsToMove.get(i).set(j, minCost);
 
-						fuel.get(i).set(j, Math.min(fuel.get(i).get(j), fuel.get(i).get(k) + fuel.get(k).get(j)));
+                    }
 
-					}
-				}
-			}
-		}
+                    if ((fuel.get(i).get(k) < MAX_VALUE) && (fuel.get(k).get(j) < MAX_VALUE)) {
 
-		int finish = graph.getTargetNode().getNumber();
-		for (int i = 0; i < graphSize; ++i) {
-			int start = i;
-			int from;
-			do {
-				from = findPrevVertex(finish, start);
-				if ((costsToMove.get(start).get(from) == inf) || (fuel.get(start).get(from) == inf)) {
-					remainsFuel.set(i, Math.min(remainsFuel.get(i), inf));
-				} else {
-					remainsFuel.set(i, Math.min(remainsFuel.get(i), fuel.get(i).get(from) - costsToMove.get(i).get(from)));
-				}
+                        fuel.get(i).set(j, Math.min(fuel.get(i).get(j), fuel.get(i).get(k) + fuel.get(k).get(j)));
 
-				start = from;
-			} while (finish != from);
-		}
-	}
+                    }
+                }
+            }
+        }
 
-	private static int findPrevVertex(final int start, final int finish) {
-		return prevNode.get(start).get(finish);
-	}
+        int finish = graph.getTargetNode().getNumber();
 
-	public static List<Integer> getRemainsFuel(final Graph graph, final int maxFuel) {
+        for (int i = 0; i < graphSize; ++i) {
 
-		costsToMove.clear();
-		costsToMove.clear();
-		prevNode.clear();
-		remainsFuel.clear();
-		fuel.clear();
+            int start = i;
+            int from;
 
-		calculate(graph, maxFuel);
+            do {
+                from = findPrevVertex(finish, start);
 
-		return remainsFuel;
-	}
+                if ((costsToMove.get(start).get(from) == MAX_VALUE) || (fuel.get(start).get(from) == MAX_VALUE)) {
+                    final int minValue = Math.min(remainsFuel.get(i), MAX_VALUE);
+                    remainsFuel.set(i, minValue);
+                } else {
+                    final int minValue = Math.min(remainsFuel.get(i), fuel.get(i).get(from) - costsToMove.get(i).get(from));
+                    remainsFuel.set(i, minValue);
+                }
 
-	private static List<List<Integer>> costsToMove = new ArrayList<>();
-	private static List<List<Integer>> fuel = new ArrayList<>();
-	private static List<List<Integer>> prevNode = new ArrayList<>();
-	private static List<Integer> remainsFuel = new ArrayList<>();
+                start = from;
+
+            } while (finish != from);
+        }
+    }
+
+    private static int findPrevVertex(final int start, final int finish) {
+        return prevNode.get(start).get(finish);
+    }
+
+    public static IntArrayList getRemainsFuel(final Graph graph, final int maxFuel) {
+
+        clear();
+        calculate(graph, maxFuel);
+
+        return remainsFuel;
+    }
+
+    private static void clear() {
+        costsToMove.clear();
+        costsToMove.clear();
+        prevNode.clear();
+        remainsFuel.clear();
+        fuel.clear();
+    }
+
+    private static List<IntArrayList> costsToMove = new ArrayList<>();
+    private static List<IntArrayList> fuel = new ArrayList<>();
+    private static List<IntArrayList> prevNode = new ArrayList<>();
+    private static IntArrayList remainsFuel = new IntArrayList();
 }

@@ -33,6 +33,8 @@ import org.haidash.visual.aco.oop.InputFileReader;
 import org.haidash.visual.aco.oop.entity.Graph;
 import org.haidash.visual.aco.oop.entity.Properties;
 import org.haidash.visual.aco.oop.impl.Colony;
+import org.haidash.visual.aco.views.GraphCanvasPane;
+import org.haidash.visual.aco.views.SettingsBox;
 
 /**
  * Author Aleh Haidash.

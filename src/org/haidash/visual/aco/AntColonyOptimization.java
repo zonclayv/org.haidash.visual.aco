@@ -2,7 +2,6 @@ package org.haidash.visual.aco;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.stage.Stage;
-
 import org.haidash.visual.aco.views.GeneralScene;
 
 
