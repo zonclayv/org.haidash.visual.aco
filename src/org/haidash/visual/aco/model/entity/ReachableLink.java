@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.oop.entity;
+package org.haidash.visual.aco.model.entity;
 
 public class ReachableLink {
 

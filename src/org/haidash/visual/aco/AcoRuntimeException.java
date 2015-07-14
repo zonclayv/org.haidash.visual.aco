@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.oop;
+package org.haidash.visual.aco;
 
 import org.apache.log4j.Logger;
 

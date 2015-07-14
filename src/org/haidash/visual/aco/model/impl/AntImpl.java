@@ -1,9 +1,9 @@
-package org.haidash.visual.aco.oop.impl;
+package org.haidash.visual.aco.model.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.oop.Agentable;
-import org.haidash.visual.aco.oop.entity.*;
+import org.haidash.visual.aco.model.Ant;
+import org.haidash.visual.aco.model.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,9 @@ import static java.lang.Math.pow;
 /**
  * @author Haidash Aleh
  */
-public class Ant implements Agentable {
+public class AntImpl implements Ant {
 
-    private final static Logger LOGGER = Logger.getLogger(Ant.class);
+    private final static Logger LOGGER = Logger.getLogger(AntImpl.class);
     private final static Random RANDOM = new Random(System.nanoTime());
 
     private final Properties properties = Properties.getInstance();
@@ -36,7 +36,7 @@ public class Ant implements Agentable {
 
     private boolean outOfFuel = false;
 
-    public Ant(final Graph graph, final IntArrayList remainsFuel) {
+    public AntImpl(final Graph graph, final IntArrayList remainsFuel) {
         this.graph = graph;
         this.remainsFuel = remainsFuel;
 
@@ -382,7 +382,8 @@ public class Ant implements Agentable {
         outOfFuel = true;
     }
 
-    public void setCurrentNode(final Node currentNode) {
+    @Override
+    public void setStartNode(final Node currentNode) {
         this.currentNode = currentNode;
     }
 }

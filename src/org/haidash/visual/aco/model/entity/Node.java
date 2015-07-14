@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.oop.entity;
+package org.haidash.visual.aco.model.entity;
 
 import java.util.ArrayList;
 import java.util.List;

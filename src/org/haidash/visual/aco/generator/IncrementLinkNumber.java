@@ -1,4 +1,6 @@
-package org.haidash.visual.aco.oop;
+package org.haidash.visual.aco.generator;
+
+import org.haidash.visual.aco.AcoRuntimeException;
 
 import java.io.*;
 import java.util.Scanner;

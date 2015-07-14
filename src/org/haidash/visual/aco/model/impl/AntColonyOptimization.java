@@ -1,32 +1,40 @@
-package org.haidash.visual.aco.oop.impl;
+package org.haidash.visual.aco.model.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.oop.Agentable;
-import org.haidash.visual.aco.oop.AntColonyOptimization;
-import org.haidash.visual.aco.oop.entity.*;
+import org.haidash.visual.aco.model.Ant;
+import org.haidash.visual.aco.model.Colony;
+import org.haidash.visual.aco.model.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Colony implements AntColonyOptimization {
+public class AntColonyOptimization implements Colony {
 
-    private final static Logger LOGGER = Logger.getLogger(Colony.class);
+    private final static Logger LOGGER = Logger.getLogger(AntColonyOptimization.class);
     private final static Properties properties = Properties.getInstance();
 
-    private SearchResult getBestResult(final SearchResult globalResult, final SearchResult localResult, final int populationIndex) {
+    private SearchResult globalResult;
+
+    public AntColonyOptimization() {
+        this.globalResult = null;
+    }
+
+    private void prepareBestResult(final SearchResult localResult, final int populationIndex) {
 
         if (globalResult == null) {
 
             if (localResult != null) {
-                LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
+                LOGGER.info("New path (Population " + populationIndex + ") " + localResult.getTotalCost() + " " + localResult.getPath());
+                globalResult=localResult;
+                return;
             }
 
-            return localResult;
+            return;
         }
 
         if (localResult == null) {
-            return globalResult;
+            return;
         }
 
         boolean isBestTotalCost = localResult.getTotalCost() < globalResult.getTotalCost();
@@ -34,18 +42,13 @@ public class Colony implements AntColonyOptimization {
         boolean isLessNodes = localResult.getPath().size() < globalResult.getPath().size();
 
         if (isBestTotalCost || (isEqualsTotalCost && isLessNodes)) {
-            LOGGER.info("New path (Population " + populationIndex + ")" + localResult.getTotalCost() + " " + localResult.getPath());
-
-            return localResult;
+            LOGGER.info("New path (Population " + populationIndex + ") " + localResult.getTotalCost() + " " + localResult.getPath());
+            globalResult=localResult;
         }
-
-        return globalResult;
     }
 
     @Override
     public void run(final Graph graph) {
-
-        SearchResult globalResult = null;
 
         LOGGER.info("PROCESS START '" + graph.getStartNode() + "' -> '" + graph.getTargetNode() + "'...");
 
@@ -59,7 +62,7 @@ public class Colony implements AntColonyOptimization {
 
             final SearchResult localResult = runPopulation(graph, remainsFuel, i);
 
-            globalResult = getBestResult(globalResult, localResult, i);
+            prepareBestResult(localResult, i);
         }
 
         final long finishTime = System.currentTimeMillis() - startTime;
@@ -77,28 +80,28 @@ public class Colony implements AntColonyOptimization {
 
         final int numAnts = properties.getNumAnts().get();
 
-        final List<Agentable> ants = new ArrayList<>(numAnts);
+        final List<Ant> ants = new ArrayList<>(numAnts);
 
         for (int i = 0; i < numAnts; i++) {
-            Ant ant = new Ant(graph, remainsFuel);
-            ant.setCurrentNode(graph.getStartNode());
+            Ant ant = new AntImpl(graph, remainsFuel);
+            ant.setStartNode(graph.getStartNode());
             ants.add(ant);
             ant.run();
         }
 
         SearchResult searchResult = null;
 
-        for (Agentable agent : ants) {
+        for (Ant agent : ants) {
 
             updatePheromones(agent);
 
             if (agent.isOutOfFuel()) {
 //                LOGGER.debug("Out of fuel " + agent.getPath());
-
                 continue;
             }
 
-//            LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
+            // LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
+//            LOGGER.info("Path (Population " + populationIndex + ")" + agent.getTotalCost());
 
             if ((searchResult == null)
                     || ((agent.getTotalCost() < searchResult.getTotalCost()) || ((agent.getTotalCost() == searchResult.getTotalCost()) && (agent
@@ -112,7 +115,7 @@ public class Colony implements AntColonyOptimization {
     }
 
     @Override
-    public void updatePheromones(final Agentable agent) {
+    public void updatePheromones(final Ant agent) {
 
         final List<Link> path = agent.getPath();
 

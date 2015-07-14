@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.oop;
+package org.haidash.visual.aco.reader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,19 +8,33 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.haidash.visual.aco.oop.entity.Graph;
-import org.haidash.visual.aco.oop.entity.Link;
-import org.haidash.visual.aco.oop.entity.Node;
-import org.haidash.visual.aco.oop.entity.Properties;
+import org.haidash.visual.aco.AcoRuntimeException;
+import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.model.entity.Link;
+import org.haidash.visual.aco.model.entity.Node;
+import org.haidash.visual.aco.model.entity.Properties;
 
 
 
-public class InputFileReader {
+public class GraphReader {
 
-	public Graph readGraph(final Graph graph, final Properties properties, final File file) {
+	final Graph graph;
+
+	public GraphReader(final Graph graph){
+
+		if(graph==null){
+			throw new AcoRuntimeException("Graph can not be empty!");
+		}
+
+		this.graph=graph;
+	}
+
+	public void read(final File file) {
+
+		final Properties properties = Properties.getInstance();
 
 		if ((file == null) || !file.exists()) {
-			throw new AcoRuntimeException("Input file not fount");
+			throw new AcoRuntimeException("Input file not fount!");
 		}
 
 		try (Scanner text = new Scanner(new FileReader(file))) {
@@ -70,9 +84,7 @@ public class InputFileReader {
 			graph.setTargetNode(nodes.get(text.nextInt()));
 
 		} catch (final FileNotFoundException e) {
-			throw new AcoRuntimeException("Input file is incorrect", e);
+			throw new AcoRuntimeException("Input file is incorrect!", e);
 		}
-
-		return graph;
 	}
 }

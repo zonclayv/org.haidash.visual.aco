@@ -1,7 +1,7 @@
-package org.haidash.visual.aco.oop.entity;
+package org.haidash.visual.aco.model.entity;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.haidash.visual.aco.oop.Agentable;
+import org.haidash.visual.aco.model.Ant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class SearchResult {
     private final List<Link> path;
     private final int totalCost;
 
-    public SearchResult(final Agentable agent) {
+    public SearchResult(final Ant agent) {
         this.spentFuelLevel = new IntArrayList(agent.getSpentFuelLevel());
         this.path = new ArrayList<>(agent.getPath());
         this.totalCost = agent.getTotalCost();

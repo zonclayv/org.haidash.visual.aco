@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.views;
+package org.haidash.visual.aco.ui;
 
 import javafx.application.Platform;
 import javafx.scene.control.TextArea;

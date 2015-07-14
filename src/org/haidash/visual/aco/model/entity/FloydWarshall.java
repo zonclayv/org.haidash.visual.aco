@@ -1,7 +1,6 @@
-package org.haidash.visual.aco.oop.entity;
+package org.haidash.visual.aco.model.entity;
 
 import com.carrotsearch.hppc.IntArrayList;
-import com.carrotsearch.hppc.IntCollection;
 
 import java.util.ArrayList;
 import java.util.List;
