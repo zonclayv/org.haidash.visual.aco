@@ -2,18 +2,9 @@ package org.haidash.visual.aco.model.entity;
 
 import javafx.beans.property.SimpleIntegerProperty;
 
-public class Properties {
+public class ACOParameters {
 
-    public static Properties getInstance() {
-
-        if (instance == null) {
-            instance = new Properties();
-        }
-
-        return instance;
-    }
-
-    private static Properties instance;
+    public static final ACOParameters INSTANCE = new ACOParameters();
 
     private final SimpleIntegerProperty alpha = new SimpleIntegerProperty(1);
     private final SimpleIntegerProperty beta = new SimpleIntegerProperty(3);
@@ -21,11 +12,10 @@ public class Properties {
     private final SimpleIntegerProperty numGeneration = new SimpleIntegerProperty(15);
     private final SimpleIntegerProperty numAnts = new SimpleIntegerProperty(30);
 
-
     private double pheromonePersistence = 0.5;
     private int maxFuelLevels = 6;
 
-    private Properties() {
+    private ACOParameters() {
     }
 
     public SimpleIntegerProperty getAlpha() {

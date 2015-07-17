@@ -7,7 +7,7 @@ import javafx.stage.Stage;
 import org.haidash.visual.aco.ui.pane.RootScene;
 
 
-public class AntColonyOptimization extends Application {
+public class VisualACOAplication extends Application {
 
     public static void main(final String[] args) {
         launch(args);

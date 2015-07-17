@@ -11,7 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.haidash.visual.aco.model.entity.Properties;
+import org.haidash.visual.aco.model.entity.ACOParameters;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -22,7 +22,7 @@ import java.text.NumberFormat;
 public class SettingsBox extends VBox {
 
     public static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
-    private final Properties properties = Properties.getInstance();
+    private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     public SettingsBox() {
 
@@ -47,16 +47,16 @@ public class SettingsBox extends VBox {
         settingsHBox.setAlignment(Pos.CENTER);
         settingsHBox.setPrefWidth(getPrefWidth());
 
-        addSpinner(settingsHBox, "Alpha", properties.getAlpha());
-        addSpinner(settingsHBox, "Beta", properties.getBeta());
+        addSpinner(settingsHBox, "Alpha", ACO_PARAMETERS.getAlpha());
+        addSpinner(settingsHBox, "Beta", ACO_PARAMETERS.getBeta());
 
         getChildren().add(settingsHBox);
 
         addSeparator();
 
-        addSlider("Q", properties.getQ());
-        addSlider("Ants", properties.getNumAnts());
-        addSlider("Gen", properties.getNumGeneration());
+        addSlider("Q", ACO_PARAMETERS.getQ());
+        addSlider("Ants", ACO_PARAMETERS.getNumAnts());
+        addSlider("Gen", ACO_PARAMETERS.getNumGeneration());
     }
 
     private void addSeparator() {

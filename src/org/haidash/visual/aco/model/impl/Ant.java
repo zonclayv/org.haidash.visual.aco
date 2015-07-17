@@ -2,7 +2,7 @@ package org.haidash.visual.aco.model.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.Ant;
+import org.haidash.visual.aco.model.Agent;
 import org.haidash.visual.aco.model.entity.*;
 
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import static java.lang.Math.pow;
 /**
  * @author Haidash Aleh
  */
-public class AntImpl implements Ant {
+public class Ant implements Agent {
 
-    private final static Logger LOGGER = Logger.getLogger(AntImpl.class);
+    private final static Logger LOGGER = Logger.getLogger(Ant.class);
     private final static Random RANDOM = new Random(System.nanoTime());
 
-    private final Properties properties = Properties.getInstance();
+    private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     private final Graph graph;
     private final IntArrayList remainsFuel;
@@ -36,7 +36,7 @@ public class AntImpl implements Ant {
 
     private boolean outOfFuel = false;
 
-    public AntImpl(final Graph graph, final IntArrayList remainsFuel) {
+    public Ant(final Graph graph, final IntArrayList remainsFuel) {
         this.graph = graph;
         this.remainsFuel = remainsFuel;
 
@@ -154,23 +154,23 @@ public class AntImpl implements Ant {
                 }
             }
 
-            final double powBetaValue = pow(link.getVisitsCount(), properties.getBeta().get());
-            final double powAlphaValue = pow(link.getWeight(), properties.getBeta().get());
-            final double etaVisits = link.getVisitsCount() == 0 ? properties.getNumAnts().get() : (properties.getNumAnts().get() / powBetaValue);
-            final double etaCost = properties.getQ().get() / powAlphaValue;
+            final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
+            final double powAlphaValue = pow(link.getWeight(), ACO_PARAMETERS.getBeta().get());
+            final double etaVisits = link.getVisitsCount() == 0 ? ACO_PARAMETERS.getNumAnts().get() : (ACO_PARAMETERS.getNumAnts().get() / powBetaValue);
+            final double etaCost = ACO_PARAMETERS.getQ().get() / powAlphaValue;
 
             double etaRemaning = 0d;
 
             final double k = (availableFuel - link.getWeight()) + remainsFuel.get(link.getSecond().getNumber());
 
             if (k > 0) {
-                etaRemaning = properties.getMaxFuelLevels() / pow(k, properties.getBeta().get());
+                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels() / pow(k, ACO_PARAMETERS.getBeta().get());
             } else if (k < 0) {
-                double tempK = 1 / pow(abs(k), properties.getBeta().get());
+                double tempK = 1 / pow(abs(k), ACO_PARAMETERS.getBeta().get());
                 tempK = tempK == 1 ? 0 : tempK;
                 etaRemaning = -1 * (1 - tempK);
             } else {
-                etaRemaning = properties.getMaxFuelLevels();
+                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels();
             }
 
             double eta = (0.3 * etaCost) + (0.3 * etaRemaning) + (0.3 * etaVisits);
@@ -185,7 +185,7 @@ public class AntImpl implements Ant {
                 sum = getSumProbabilities(cycle);
             }
 
-            final double probability = 100 * ((pow(tau, properties.getAlpha().get()) * eta) / sum);
+            final double probability = 100 * ((pow(tau, ACO_PARAMETERS.getAlpha().get()) * eta) / sum);
 
 //            LOGGER.debug("Chance "
 //                    + currentNode
@@ -211,7 +211,7 @@ public class AntImpl implements Ant {
     private int getAvailableFuel() {
 
         final int fuelInNode = tempFuelLevel.get(currentNode.getNumber());
-        final int maxFuelLevels = properties.getMaxFuelLevels();
+        final int maxFuelLevels = ACO_PARAMETERS.getMaxFuelLevels();
         final int allFuel = fuelBalance + fuelInNode;
 
         return allFuel > maxFuelLevels ? maxFuelLevels : allFuel;
@@ -220,7 +220,7 @@ public class AntImpl implements Ant {
     private int getFuelAfterCycle(final int availableFuel, final int fuelInCycle) {
 
         final int fuelInNode = tempFuelLevel.get(currentNode.getNumber());
-        final int maxFuelLevels = properties.getMaxFuelLevels();
+        final int maxFuelLevels = ACO_PARAMETERS.getMaxFuelLevels();
         final int allFuel = fuelBalance + fuelInNode;
 
         int tempFuel;
@@ -268,23 +268,23 @@ public class AntImpl implements Ant {
                 }
             }
 
-            final double powBetaValue = pow(link.getVisitsCount(), properties.getBeta().get());
-            final double powAlphaValue = pow(link.getWeight(), properties.getBeta().get());
-            final double etaVisits = link.getVisitsCount() == 0 ? properties.getNumAnts().get() : (properties.getNumAnts().get() / powBetaValue);
-            final double etaCost = properties.getQ().get() / powAlphaValue;
+            final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
+            final double powAlphaValue = pow(link.getWeight(), ACO_PARAMETERS.getBeta().get());
+            final double etaVisits = link.getVisitsCount() == 0 ? ACO_PARAMETERS.getNumAnts().get() : (ACO_PARAMETERS.getNumAnts().get() / powBetaValue);
+            final double etaCost = ACO_PARAMETERS.getQ().get() / powAlphaValue;
 
             double etaRemaning;
 
             final double k = (availableFuel - link.getWeight()) + remainsFuel.get(link.getSecond().getNumber());
 
             if (k > 0) {
-                etaRemaning = properties.getMaxFuelLevels() / pow(k, properties.getBeta().get());
+                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels() / pow(k, ACO_PARAMETERS.getBeta().get());
             } else if (k < 0) {
-                double tempK = 1 / pow(abs(k), properties.getBeta().get());
+                double tempK = 1 / pow(abs(k), ACO_PARAMETERS.getBeta().get());
                 tempK = tempK == 1 ? 0 : tempK;
                 etaRemaning = -1 * (1 - tempK);
             } else {
-                etaRemaning = properties.getMaxFuelLevels();
+                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels();
             }
 
             double eta = (0.3 * etaCost) + (0.3 * etaRemaning) + (0.3 * etaVisits);
@@ -295,7 +295,7 @@ public class AntImpl implements Ant {
 
             final double tau = link.getPPheromone() / link.getNPheromone();
 
-            sum += pow(tau, properties.getAlpha().get()) * eta;
+            sum += pow(tau, ACO_PARAMETERS.getAlpha().get()) * eta;
         }
 
         return sum;
@@ -336,8 +336,13 @@ public class AntImpl implements Ant {
             return;
         }
 
-        final int randomBound = (int) reachableLinks.stream().mapToDouble(ReachableLink::getValue).sum();
-        final int rand = RANDOM.nextInt(randomBound);
+        double randomBound = 0d;
+
+        for (ReachableLink link : reachableLinks) {
+            randomBound += link.getValue();
+        }
+
+        final int rand = RANDOM.nextInt((int) randomBound);
 
         double roulette = 0.0;
 
@@ -380,10 +385,5 @@ public class AntImpl implements Ant {
         }
 
         outOfFuel = true;
-    }
-
-    @Override
-    public void setStartNode(final Node currentNode) {
-        this.currentNode = currentNode;
     }
 }

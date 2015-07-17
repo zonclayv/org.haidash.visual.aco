@@ -12,11 +12,13 @@ import org.haidash.visual.aco.AcoRuntimeException;
 import org.haidash.visual.aco.model.entity.Graph;
 import org.haidash.visual.aco.model.entity.Link;
 import org.haidash.visual.aco.model.entity.Node;
-import org.haidash.visual.aco.model.entity.Properties;
+import org.haidash.visual.aco.model.entity.ACOParameters;
 
 
 
 public class GraphReader {
+
+	final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
 	final Graph graph;
 
@@ -30,8 +32,6 @@ public class GraphReader {
 	}
 
 	public void read(final File file) {
-
-		final Properties properties = Properties.getInstance();
 
 		if ((file == null) || !file.exists()) {
 			throw new AcoRuntimeException("Input file not fount!");
@@ -78,7 +78,7 @@ public class GraphReader {
 				startNode.getOutgoingLinks().add(link);
 			}
 
-			properties.setMaxFuelLevels(text.nextInt());
+			ACO_PARAMETERS.setMaxFuelLevels(text.nextInt());
 
 			graph.setStartNode(nodes.get(text.nextInt()));
 			graph.setTargetNode(nodes.get(text.nextInt()));
