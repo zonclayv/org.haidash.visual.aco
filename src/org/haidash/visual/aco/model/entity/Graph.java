@@ -16,14 +16,15 @@ public class Graph {
     private List<Link> links;
     private List<Node> nodes;
 
-    private final Map<Node, Cycle> cycles = new HashMap<>();
-    private final Set<List<Link>> badPaths = new HashSet<>();
+    private final Map<Node, Cycle> cycles;
+    private final Set<List<Link>> badPaths;
+
+    public Graph() {
+        this.cycles = new HashMap<>();
+        this.badPaths = new HashSet<>();
+    }
 
     public void addCycle(final Cycle cycle) {
-
-        if (cycles == null) {
-            return;
-        }
 
         final Cycle oldCycle = cycles.get(cycle.getStartNode());
 
@@ -78,10 +79,6 @@ public class Graph {
 
     public boolean isBadPath(final List<Link> path, final Link nextArc) {
 
-        if (badPaths == null) {
-            return false;
-        }
-
         final List<Link> nodes = new ArrayList<>(path);
         nodes.add(nextArc);
 
@@ -89,10 +86,6 @@ public class Graph {
     }
 
     public boolean isBadPath(final List<Link> path, final List<Link> cycleArcs, final Link nextArc) {
-
-        if (badPaths == null) {
-            return false;
-        }
 
         final List<Link> nodes = new ArrayList<>(path);
         nodes.addAll(cycleArcs);

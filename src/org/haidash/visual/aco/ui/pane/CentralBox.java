@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.ACOHelper;
+import org.haidash.visual.aco.model.ACOUtils;
 import org.haidash.visual.aco.model.entity.Graph;
 import org.haidash.visual.aco.reader.GraphReader;
 import org.haidash.visual.aco.ui.TextAreaAppender;
@@ -85,7 +85,7 @@ public class CentralBox extends VBox {
         LOGGER.info("Graph initialized...");
 
         new Thread(() -> {
-            ACOHelper.runACO(graph);
+            ACOUtils.runACO(graph);
         }).start();
     }
 

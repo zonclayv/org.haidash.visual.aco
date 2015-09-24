@@ -6,7 +6,7 @@ import org.haidash.visual.aco.model.entity.ACOParameters;
 import org.haidash.visual.aco.model.entity.Graph;
 import org.haidash.visual.aco.model.entity.Link;
 import org.haidash.visual.aco.model.entity.SearchResult;
-import org.haidash.visual.aco.model.impl.Ant;
+import org.haidash.visual.aco.model.impl.ClassicalAnt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class AntColony {
 
         for (int j = 0; j < numAnts; j++) {
 
-            final Agent agent = new Ant(graph, remainsFuel);
+            final Agent agent = new ClassicalAnt(graph, remainsFuel);
             agent.run();
 
             agents.add(agent);
@@ -43,10 +43,10 @@ public class AntColony {
                 continue;
             }
 
-            // LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
-            // LOGGER.info("Path (Population " + populationIndex + ")" + agent.getTotalCost());
+//            LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
+            LOGGER.info("Path " + agent.getTotalCost());
 
-            if (ACOHelper.isNewResult(result, agent.getTotalCost(), agent.getPath().size())) {
+            if (ACOUtils.isNewResult(result, agent.getTotalCost(), agent.getPath().size())) {
                 result = new SearchResult(agent);
             }
         }

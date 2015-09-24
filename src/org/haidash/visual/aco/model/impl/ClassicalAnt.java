@@ -11,13 +11,14 @@ import java.util.Random;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import static org.haidash.visual.aco.model.ACOUtils.findCycle;
 
 /**
  * @author Haidash Aleh
  */
-public class Ant implements Agent {
+public class ClassicalAnt implements Agent {
 
-    private final static Logger LOGGER = Logger.getLogger(Ant.class);
+    private final static Logger LOGGER = Logger.getLogger(ClassicalAnt.class);
     private final static Random RANDOM = new Random(System.nanoTime());
 
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
@@ -36,7 +37,7 @@ public class Ant implements Agent {
 
     private boolean outOfFuel = false;
 
-    public Ant(final Graph graph, final IntArrayList remainsFuel) {
+    public ClassicalAnt(final Graph graph, final IntArrayList remainsFuel) {
         this.graph = graph;
         this.remainsFuel = remainsFuel;
 
@@ -84,47 +85,6 @@ public class Ant implements Agent {
         }
 
         return true;
-    }
-
-    public Cycle findCycle(final Link newLink) {
-
-        final List<Link> visitedLinks = new ArrayList<>();
-
-        int fuel = newLink.getFirst().getFuelBalance() - newLink.getWeight();
-
-        boolean isFindCycle = false;
-
-        for (Link pathLink : path) {
-
-            if ((!pathLink.getFirst().equals(newLink.getSecond()) || pathLink.equals(newLink)) && !isFindCycle) {
-                continue;
-            }
-
-            isFindCycle = true;
-
-            if (!visitedLinks.contains(pathLink)) {
-                fuel += pathLink.getFirst().getFuelBalance();
-            }
-
-            visitedLinks.add(pathLink);
-
-            fuel -= pathLink.getWeight();
-        }
-
-        if (isFindCycle) {
-
-            visitedLinks.add(newLink);
-            fuel -= newLink.getWeight();
-
-            final Cycle cycle = new Cycle();
-            cycle.setStartNode(newLink.getSecond());
-            cycle.setFuel(fuel);
-            cycle.setLinks(visitedLinks);
-
-            return cycle;
-        }
-
-        return null;
     }
 
     private List<ReachableLink> findReachableLinks() {
@@ -356,7 +316,8 @@ public class Ant implements Agent {
                 continue;
             }
 
-            final int futureFuelBalance = getAvailableFuel() - reachableLink.getLink().getWeight();
+            final Link link = reachableLink.getLink();
+            final int futureFuelBalance = getAvailableFuel() - link.getWeight();
 
             if (futureFuelBalance < 0) {
 
@@ -373,9 +334,9 @@ public class Ant implements Agent {
             }
 
             final int usedFuel = getAvailableFuel() - fuelBalance;
-            final Cycle newCycle = findCycle(reachableLink.getLink());
+            final Cycle newCycle = findCycle(link, path);
 
-            addNextNode(usedFuel, reachableLink.getLink());
+            addNextNode(usedFuel, link);
 
             if (newCycle != null) {
                 graph.addCycle(newCycle);
