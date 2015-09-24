@@ -1,6 +1,8 @@
 /bin/
 /.settings/
+/out/
 /.classpath
+/.idea/
 /.project
-/hs_err_pid18933.log
 /build.fxbuild
+/visual.aco.iml
