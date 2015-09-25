@@ -5,6 +5,7 @@ import org.haidash.visual.aco.model.Agent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchResult {
 
@@ -16,12 +17,6 @@ public class SearchResult {
         this.spentFuelLevel = new IntArrayList(agent.getSpentFuelLevel());
         this.path = new ArrayList<>(agent.getPath());
         this.totalCost = agent.getTotalCost();
-    }
-
-    public SearchResult(final IntArrayList spentFuelLevel, final List<Link> path, final int totalCost) {
-        this.spentFuelLevel = new IntArrayList(spentFuelLevel);
-        this.path = new ArrayList<>(path);
-        this.totalCost = totalCost;
     }
 
     @Override
@@ -41,19 +36,11 @@ public class SearchResult {
 
         final SearchResult other = (SearchResult) obj;
 
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path,other.path)) {
             return false;
         }
 
-        if (spentFuelLevel == null) {
-            if (other.spentFuelLevel != null) {
-                return false;
-            }
-        } else if (!spentFuelLevel.equals(other.spentFuelLevel)) {
+        if (!Objects.equals(spentFuelLevel,other.spentFuelLevel)) {
             return false;
         }
 
@@ -81,8 +68,8 @@ public class SearchResult {
         final int prime = 31;
 
         int result = 1;
-        result = (prime * result) + ((path == null) ? 0 : path.hashCode());
-        result = (prime * result) + ((spentFuelLevel == null) ? 0 : spentFuelLevel.hashCode());
+        result = (prime * result) + (path.hashCode());
+        result = (prime * result) + (spentFuelLevel.hashCode());
         result = (prime * result) + totalCost;
 
         return result;

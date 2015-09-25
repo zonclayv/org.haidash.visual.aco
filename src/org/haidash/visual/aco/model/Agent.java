@@ -16,31 +16,31 @@ public interface Agent {
      *
      * @return {@link java.util.List} Link
      */
-    public List<Link> getPath();
+    List<Link> getPath();
 
     /**
      * Получение {@link IntArrayList} содержащий остаток топлива в вершинах
      *
      * @return {@link IntArrayList} содержащий остаток топлива в вершинах
      */
-    public IntArrayList getSpentFuelLevel();
+    IntArrayList getSpentFuelLevel();
 
     /**
      * Получение общей стоимости пути
      *
      * @return стоимость пути
      */
-    public int getTotalCost();
+    int getTotalCost();
 
     /**
      * Закончилось ли топливо у агента
      *
      * @return true, если закончилось топливо
      */
-    public boolean isOutOfFuel();
+    boolean isOutOfFuel();
 
     /**
      * Запуск процесса поиска пути
      */
-    public void run();
+    void run();
 }

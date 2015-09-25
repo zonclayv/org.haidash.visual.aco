@@ -1,5 +1,7 @@
 package org.haidash.visual.aco.model.entity;
 
+import java.util.Objects;
+
 public class ReachableLink {
 
     private final Node node;
@@ -29,11 +31,7 @@ public class ReachableLink {
 
         final ReachableLink other = (ReachableLink) obj;
 
-        if (link == null) {
-            if (other.link != null) {
-                return false;
-            }
-        } else if (!link.equals(other.link)) {
+        if (!Objects.equals(link,other.link)) {
             return false;
         }
 
@@ -59,7 +57,7 @@ public class ReachableLink {
         final int prime = 31;
 
         int result = 1;
-        result = (prime * result) + ((link == null) ? 0 : link.hashCode());
+        result = (prime * result) + (link.hashCode());
 
         long temp;
         temp = Double.doubleToLongBits(value);

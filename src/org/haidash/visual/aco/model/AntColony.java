@@ -13,7 +13,7 @@ import java.util.List;
 
 public class AntColony {
 
-    private final static Logger LOGGER = Logger.getLogger(AntColony.class);
+    //    private final static Logger LOGGER = Logger.getLogger(AntColony.class);
     private final static ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     private final Graph graph;
@@ -44,16 +44,16 @@ public class AntColony {
             }
 
 //            LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
-            LOGGER.info("Path " + agent.getTotalCost());
+//            LOGGER.info("Path " + agent.getTotalCost());
 
             if (ACOUtils.isNewResult(result, agent.getTotalCost(), agent.getPath().size())) {
                 result = new SearchResult(agent);
             }
         }
 
-        for (Agent agent : agents) {
-            updatePheromones(agent);
-        }
+        agents.forEach(this::updatePheromones);
+
+        processPheromonePersistence();
 
         return result;
     }
@@ -80,6 +80,34 @@ public class AntColony {
                 nValue += deltaTau;
                 link.setNPheromone(nValue);
             }
+        }
+    }
+
+    private void processPheromonePersistence() {
+
+        final List<Link> links = graph.getLinks();
+
+        for (final Link link : links) {
+
+
+            double pValue = link.getPPheromone();
+            double nValue = link.getPPheromone();
+
+            pValue *= 1.0 - ACO_PARAMETERS.getPheromonePersistence();
+
+            if (pValue < 1.0) {
+                pValue = 1.0;
+            }
+
+            link.setPPheromone(pValue);
+
+            nValue *= 1.0 - ACO_PARAMETERS.getPheromonePersistence();
+
+            if (nValue < 1.0) {
+                nValue = 1.0;
+            }
+
+            link.setNPheromone(nValue);
         }
     }
 }
