@@ -2,6 +2,8 @@ package org.haidash.visual.aco.ui.pane;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -12,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.haidash.visual.aco.model.entity.ACOParameters;
+import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.ui.GraphChangeListener;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -19,12 +23,17 @@ import java.text.NumberFormat;
 /**
  * Author Aleh Haidash.
  */
-public class SettingsBox extends VBox {
+public class SettingsBox extends VBox implements GraphChangeListener {
 
-    public static final NumberFormat DECIMAL_FORMAT = new DecimalFormat("#.#");
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
+    private final Graph graph;
+    private final Spinner<Integer> fromSpinner;
+    private final Spinner<Integer> toSpinner;
 
-    public SettingsBox() {
+    public SettingsBox(RootScene rootScene) {
+
+        this.graph = rootScene.getGraph();
+        this.graph.addListener(this);
 
         setMinWidth(250);
         setPrefWidth(250);
@@ -43,14 +52,56 @@ public class SettingsBox extends VBox {
 
         addSeparator();
 
-        final HBox settingsHBox = new HBox();
-        settingsHBox.setAlignment(Pos.CENTER);
-        settingsHBox.setPrefWidth(getPrefWidth());
+        final HBox nodesHBox = new HBox();
+        nodesHBox.setAlignment(Pos.CENTER);
+        nodesHBox.setPrefWidth(getPrefWidth());
 
-        addSpinner(settingsHBox, "Alpha", ACO_PARAMETERS.getAlpha());
-        addSpinner(settingsHBox, "Beta", ACO_PARAMETERS.getBeta());
+        double prefWidth = getPrefWidth();
 
-        getChildren().add(settingsHBox);
+        final Label fromLabel = new Label("From");
+        fromLabel.setPrefWidth(prefWidth * 0.20);
+        fromLabel.setAlignment(Pos.CENTER);
+
+        fromSpinner = new Spinner<>();
+        fromSpinner.setPrefWidth(prefWidth * 0.30);
+        fromSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0, 1));
+        fromSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            graph.setStartNode(graph.getNode(newValue));
+        });
+
+        nodesHBox.getChildren().addAll(fromLabel, fromSpinner);
+
+        HBox.setMargin(fromLabel, new Insets(5, 0, 5, 0));
+        HBox.setMargin(fromSpinner, new Insets(5, 10, 5, 0));
+
+        final Label toLabel = new Label("To");
+        toLabel.setPrefWidth(prefWidth * 0.20);
+        toLabel.setAlignment(Pos.CENTER);
+
+        toSpinner = new Spinner<>();
+        toSpinner.setPrefWidth(prefWidth * 0.30);
+        toSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0, 1));
+        toSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+            graph.setTargetNode(graph.getNode(newValue));
+        });
+
+        nodesHBox.getChildren().addAll(toLabel, toSpinner);
+
+        HBox.setMargin(toLabel, new Insets(5, 0, 5, 0));
+        HBox.setMargin(toSpinner, new Insets(5, 10, 5, 0));
+
+        getChildren().add(nodesHBox);
+
+        addSeparator();
+
+        final HBox constHBox = new HBox();
+        constHBox.setAlignment(Pos.CENTER);
+        constHBox.setPrefWidth(getPrefWidth());
+
+        addSpinner(constHBox, "Alpha", ACO_PARAMETERS.getAlpha());
+        addSpinner(constHBox, "Beta", ACO_PARAMETERS.getBeta());
+
+        getChildren().add(constHBox);
 
         addSeparator();
 
@@ -115,5 +166,21 @@ public class SettingsBox extends VBox {
         settingsHBox.getChildren().addAll(label, slider, value);
 
         getChildren().add(settingsHBox);
+    }
+
+    @Override
+    public void graphChanged() {
+        try {
+            fromSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, graph.getNodes().size(), graph.getStartNode().getNumber(), 1));
+            toSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, graph.getNodes().size(), graph.getTargetNode().getNumber(), 1));
+
+            fromSpinner.setDisable(false);
+            fromSpinner.setDisable(false);
+
+        } catch (Exception e) {
+            fromSpinner.setDisable(true);
+            fromSpinner.setDisable(true);
+        }
+
     }
 }

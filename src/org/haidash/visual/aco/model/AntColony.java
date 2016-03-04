@@ -13,7 +13,7 @@ import java.util.List;
 
 public class AntColony {
 
-    //    private final static Logger LOGGER = Logger.getLogger(AntColony.class);
+    private final static Logger LOGGER = Logger.getLogger(AntColony.class);
     private final static ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     private final Graph graph;
@@ -39,11 +39,11 @@ public class AntColony {
             agents.add(agent);
 
             if (agent.isOutOfFuel()) {
-                // LOGGER.debug("Out of fuel " + agent.getPath());
+//                LOGGER.debug("Out of fuel " + agent.getPath());
                 continue;
             }
 
-//            LOGGER.debug("New path (Population " + populationIndex + ")" + agent.getTotalCost() + " " + agent.getPath());
+            LOGGER.debug("New path " + agent.getTotalCost() + " " + agent.getPath());
 //            LOGGER.info("Path " + agent.getTotalCost());
 
             if (ACOUtils.isNewResult(result, agent.getTotalCost(), agent.getPath().size())) {

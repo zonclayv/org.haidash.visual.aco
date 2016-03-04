@@ -28,11 +28,14 @@ import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 public class CentralBox extends VBox {
 
     private final static Logger LOGGER = Logger.getLogger(CentralBox.class);
+    private final Graph graph;
 
-    private File inputFile;
     private TextField fileBrowseText;
 
-    public CentralBox() {
+    public CentralBox(RootScene rootScene) {
+
+        this.graph = rootScene.getGraph();
+
         setPadding(new Insets(5));
         prefHeightProperty().bind(heightProperty());
         setAlignment(Pos.TOP_CENTER);
@@ -67,22 +70,17 @@ public class CentralBox extends VBox {
         final TextArea textLog = new TextArea();
         textLog.setWrapText(true);
         textLog.setEditable(false);
-        textLog.prefHeightProperty().bind(heightProperty().subtract(hBox.getHeight()));
+        textLog.prefHeightProperty().bind(heightProperty().subtract(70));
 
         TextAreaAppender.setTextArea(textLog);
         getChildren().add(textLog);
 
-        VBox.setMargin(textLog, new Insets(5, 0, 5, 0));
+        VBox.setMargin(textLog, new Insets(5, 0, 0, 0));
     }
 
     private void findPath() {
 
-        final Graph graph = new Graph();
-
-        final GraphReader fileReader = new GraphReader(graph);
-        fileReader.read(inputFile);
-
-        LOGGER.info("Graph initialized...");
+        graph.clear();
 
         new Thread(() -> {
             ACOUtils.runACO(graph);
@@ -97,8 +95,21 @@ public class CentralBox extends VBox {
         final File file = fileChooser.showOpenDialog(getScene().getWindow());
 
         if ((file != null) && file.getName().endsWith(".txt")) {
+
             fileBrowseText.setText(file.getAbsolutePath());
-            inputFile = file;
+
+            final GraphReader fileReader = new GraphReader(graph);
+
+            try {
+                fileReader.read(file);
+
+                graph.fireListener();
+
+                LOGGER.info("Graph initialized...");
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage());
+            }
+
         }
     }
 }

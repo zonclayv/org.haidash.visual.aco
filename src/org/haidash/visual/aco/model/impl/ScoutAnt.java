@@ -25,9 +25,11 @@ public class ScoutAnt implements Agent {
     private final IntArrayList spentFuelLevel;
     private final IntArrayList tempFuelLevel;
 
+    private final Node startNode;
+
     private Node currentNode;
 
-    private int fuelBalance = 0;
+    private int fuelBalance = ACO_PARAMETERS.getMaxFuelLevels();
     private int totalCost = 0;
 
     private boolean outOfFuel = false;
@@ -37,7 +39,8 @@ public class ScoutAnt implements Agent {
 
         final int nodeIndex = getNodeIndex(graph);
 
-        this.currentNode = graph.getNodes().get(nodeIndex);
+        this.startNode = graph.getNodes().get(nodeIndex);
+        this.currentNode = startNode;
         this.tempFuelLevel = new IntArrayList(graph.getFuelLevels());
         this.spentFuelLevel = new IntArrayList();
         this.path = new ArrayList<>();
@@ -84,6 +87,10 @@ public class ScoutAnt implements Agent {
         while ((currentNode != graph.getTargetNode()) && !outOfFuel) {
             selectNode();
         }
+
+        if (!outOfFuel) {
+            startNode.addProperty("Path", path);
+        }
     }
 
     private void selectNode() {
@@ -98,8 +105,6 @@ public class ScoutAnt implements Agent {
 
         if (reachableLinks.isEmpty() || outOfFuel) {
             outOfFuel = true;
-            graph.getBadPaths().add(path);
-
             return;
         }
 
@@ -125,13 +130,8 @@ public class ScoutAnt implements Agent {
 
             final int usedFuel = getAvailableFuel() - fuelBalance;
             final Link link = reachableLink.getLink();
-            final Cycle newCycle = findCycle(link, path);
 
             addNextNode(usedFuel, link);
-
-            if (newCycle != null) {
-                graph.addCycle(newCycle);
-            }
 
             return;
         }

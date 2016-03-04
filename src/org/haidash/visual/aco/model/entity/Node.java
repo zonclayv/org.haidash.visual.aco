@@ -1,12 +1,16 @@
 package org.haidash.visual.aco.model.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Node {
 
     private int number;
     private int fuelBalance;
+
+    private Map<String, Object> properties;
 
     private final List<Link> outgoingLink;
 
@@ -14,6 +18,7 @@ public class Node {
         this.number = number;
         this.fuelBalance = fuelBalance;
         this.outgoingLink = new ArrayList<>();
+        this.properties = new HashMap<>();
     }
 
     @Override
@@ -52,6 +57,14 @@ public class Node {
         return outgoingLink;
     }
 
+    public Object getProperty(String key) {
+        return properties.get(key);
+    }
+
+    public void addProperty(String key, Object value) {
+        properties.put(key, value);
+    }
+
     @Override
     public int hashCode() {
 
@@ -76,4 +89,7 @@ public class Node {
         return "<" + number + ">";
     }
 
+    public void clear(){
+        properties.clear();
+    }
 }

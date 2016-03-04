@@ -1,10 +1,13 @@
 package org.haidash.visual.aco.model.entity;
 
 import com.carrotsearch.hppc.IntArrayList;
+import org.haidash.visual.aco.ui.GraphChangeListener;
 
 import java.util.*;
 
 public class Graph {
+
+    private List<GraphChangeListener> listeners;
 
     private int graphSize;
 
@@ -20,8 +23,31 @@ public class Graph {
     private final Set<List<Link>> badPaths;
 
     public Graph() {
+        this.listeners = new ArrayList<>();
         this.cycles = new HashMap<>();
         this.badPaths = new HashSet<>();
+    }
+
+
+    public void addListener(GraphChangeListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(GraphChangeListener listener) {
+        listeners.remove(listener);
+    }
+
+    public void fireListener() {
+        listeners.forEach(GraphChangeListener::graphChanged);
+    }
+
+    public void clear() {
+
+        cycles.clear();
+        badPaths.clear();
+
+        final List<Node> nodes = getNodes();
+        nodes.forEach(Node::clear);
     }
 
     public void addCycle(final Cycle cycle) {
@@ -87,11 +113,11 @@ public class Graph {
 
     public boolean isBadPath(final List<Link> path, final List<Link> cycleArcs, final Link nextArc) {
 
-        final List<Link> nodes = new ArrayList<>(path);
-        nodes.addAll(cycleArcs);
-        nodes.add(nextArc);
+        final List<Link> links = new ArrayList<>(path);
+        links.addAll(cycleArcs);
+        links.add(nextArc);
 
-        return badPaths.contains(nodes);
+        return badPaths.contains(links);
     }
 
     public void setFuelLevels(final IntArrayList fuelLevels) {
@@ -116,6 +142,18 @@ public class Graph {
 
     public void setTargetNode(final Node targetNode) {
         this.targetNode = targetNode;
+    }
+
+    public Node getNode(final int index) {
+        final List<Node> nodes = getNodes();
+
+        for (Node node : nodes) {
+            if (node.getNumber() == index) {
+                return node;
+            }
+        }
+
+        return null;
     }
 
     @Override

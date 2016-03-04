@@ -221,9 +221,10 @@ public class ClassicalAnt implements Agent {
                     continue;
                 }
 
-                final int fuelAfterCycle = getFuelAfterCycle(availableFuel, cycle.getFuel());
+                final int fuelAfterCycle = availableFuel + cycle.getFuel();
+                final List<Link> links = cycle.getLinks();
 
-                if ((fuelAfterCycle < link.getWeight()) || graph.isBadPath(path, cycle.getLinks(), link)) {
+                if (link.equals(links.get(0)) || (fuelAfterCycle < link.getWeight()) || graph.isBadPath(path, links, link)) {
                     continue;
                 }
             }
@@ -281,6 +282,30 @@ public class ClassicalAnt implements Agent {
 
     private void selectNode() {
 
+        final Object property = currentNode.getProperty("Path");
+
+        if (property != null && RANDOM.nextBoolean()) {
+
+            final List<Link> links = (List<Link>) property;
+
+            for (Link link : links) {
+
+                final int futureFuelBalance = getAvailableFuel() - link.getWeight();
+
+                if (futureFuelBalance < 0 && getAvailableFuel() <= 0) {
+                    outOfFuel = true;
+                    return;
+                } else if (futureFuelBalance < 0) {
+                    break;
+                }
+
+//                LOGGER.debug("Using scout ant path: from "+link.getFirst().getNumber()+" to "+link.getSecond().getNumber());
+
+                final int usedFuel = getAvailableFuel() - fuelBalance;
+                addNextNode(usedFuel, link);
+            }
+        }
+
         final List<ReachableLink> reachableLinks = findReachableLinks();
 
         final Node targetNode = graph.getTargetNode();
@@ -291,7 +316,7 @@ public class ClassicalAnt implements Agent {
 
         if (reachableLinks.isEmpty() || outOfFuel) {
             outOfFuel = true;
-            graph.getBadPaths().add(path);
+            graph.getBadPaths().add(this.path);
 
             return;
         }
@@ -328,13 +353,13 @@ public class ClassicalAnt implements Agent {
                 }
 
                 outOfFuel = true;
-                graph.getBadPaths().add(path);
+                graph.getBadPaths().add(this.path);
 
                 return;
             }
 
             final int usedFuel = getAvailableFuel() - fuelBalance;
-            final Cycle newCycle = findCycle(link, path);
+            final Cycle newCycle = findCycle(link, this.path);
 
             addNextNode(usedFuel, link);
 
