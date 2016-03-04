@@ -42,7 +42,7 @@ public class ACOUtils {
 
             if (isNewResult(globalResult, result)) {
                 globalResult = result;
-                LOGGER.info("New path (Population " + i + ") " + result.getTotalCost() + " " + result.getPath());
+                LOGGER.info("New path (Population " + i+1 + ") " + result.getTotalCost() + " " + result.getPath());
             }
         }
 

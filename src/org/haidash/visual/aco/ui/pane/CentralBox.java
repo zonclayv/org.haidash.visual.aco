@@ -2,10 +2,7 @@ package org.haidash.visual.aco.ui.pane;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -18,6 +15,7 @@ import org.haidash.visual.aco.model.entity.Graph;
 import org.haidash.visual.aco.reader.GraphReader;
 import org.haidash.visual.aco.ui.TextAreaAppender;
 
+import javax.annotation.processing.Messager;
 import java.io.File;
 
 import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
@@ -36,8 +34,7 @@ public class CentralBox extends VBox {
 
         this.graph = rootScene.getGraph();
 
-        setPadding(new Insets(5));
-        prefHeightProperty().bind(heightProperty());
+        setPadding(new Insets(5, 5, 0, 5));
         setAlignment(Pos.TOP_CENTER);
 
         addControls();
@@ -67,18 +64,22 @@ public class CentralBox extends VBox {
 
         getChildren().add(hBox);
 
-        final TextArea textLog = new TextArea();
-        textLog.setWrapText(true);
-        textLog.setEditable(false);
-        textLog.prefHeightProperty().bind(heightProperty().subtract(70));
+        final GraphPane graphPane = new GraphPane(graph);
+        graphPane.prefWidthProperty().bind(prefWidthProperty());
+        graphPane.prefHeightProperty().bind(heightProperty().subtract(hBox.heightProperty()));
 
-        TextAreaAppender.setTextArea(textLog);
-        getChildren().add(textLog);
+        VBox.setMargin(graphPane, new Insets(5, 0, 0, 0));
 
-        VBox.setMargin(textLog, new Insets(5, 0, 0, 0));
+        getChildren().add(graphPane);
     }
 
     private void findPath() {
+
+        if (!graph.isReady()) {
+            final Alert alert = new Alert(Alert.AlertType.WARNING, "Graph is not ready");
+            alert.showAndWait();
+            return;
+        }
 
         graph.clear();
 

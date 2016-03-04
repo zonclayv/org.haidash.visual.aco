@@ -2,6 +2,8 @@ package org.haidash.visual.aco.ui.pane;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.ui.TextAreaAppender;
 
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
@@ -66,7 +69,7 @@ public class RootScene extends Scene {
         reportItem = new RadioMenuItem("Report");
         reportItem.setToggleGroup(modeGroup);
 
-        mode.getItems().addAll(simulateItem,reportItem);
+        mode.getItems().addAll(simulateItem, reportItem);
 
         final Menu app = new Menu("Application");
 
@@ -81,6 +84,18 @@ public class RootScene extends Scene {
 
     private void addControls(final Pane parent) {
 
+        final TextArea textLog = new TextArea();
+        textLog.setWrapText(true);
+        textLog.setEditable(false);
+        textLog.visibleProperty().bind(simulateItem.selectedProperty());
+        textLog.setPrefRowCount(7);
+        textLog.setPrefHeight(150);
+
+        VBox.setMargin(textLog, new Insets(5));
+
+        final VBox generalVBox = new VBox();
+        generalVBox.setAlignment(Pos.TOP_CENTER);
+
         final VBox settingsBox = new SettingsBox(this);
         settingsBox.prefHeightProperty().bind(heightProperty());
         settingsBox.visibleProperty().bind(simulateItem.selectedProperty());
@@ -89,7 +104,16 @@ public class RootScene extends Scene {
         centralVBox.prefWidthProperty().bind(widthProperty().subtract(settingsBox.getPrefWidth()));
         centralVBox.visibleProperty().bind(simulateItem.selectedProperty());
 
-        parent.getChildren().addAll(centralVBox, settingsBox);
+        final HBox generalHBox = new HBox();
+        generalHBox.setAlignment(Pos.CENTER);
+        generalHBox.prefHeightProperty().bind(heightProperty().subtract(textLog.prefHeightProperty()).subtract(40));
+        generalHBox.getChildren().addAll(centralVBox, settingsBox);
+
+        generalVBox.getChildren().addAll(generalHBox,textLog);
+
+        TextAreaAppender.setTextArea(textLog);
+
+        parent.getChildren().add(generalVBox);
     }
 
     public Graph getGraph() {

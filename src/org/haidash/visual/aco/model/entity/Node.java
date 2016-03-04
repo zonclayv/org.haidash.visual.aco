@@ -8,10 +8,9 @@ import java.util.Map;
 public class Node {
 
     private int number;
+    private Pair<Integer, Integer> location;
     private int fuelBalance;
-
     private Map<String, Object> properties;
-
     private final List<Link> outgoingLink;
 
     public Node(final int number, final int fuelBalance) {
@@ -19,6 +18,7 @@ public class Node {
         this.fuelBalance = fuelBalance;
         this.outgoingLink = new ArrayList<>();
         this.properties = new HashMap<>();
+        this.location = new Pair<>(0, 0);
     }
 
     @Override
@@ -89,7 +89,15 @@ public class Node {
         return "<" + number + ">";
     }
 
-    public void clear(){
+    public void clear() {
         properties.clear();
+    }
+
+    public Pair<Integer, Integer> getLocation() {
+        return location;
+    }
+
+    public void setLocation(Pair<Integer, Integer> location) {
+        this.location = location;
     }
 }

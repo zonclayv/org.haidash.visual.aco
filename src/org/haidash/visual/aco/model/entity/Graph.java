@@ -28,6 +28,18 @@ public class Graph {
         this.badPaths = new HashSet<>();
     }
 
+    public boolean isReady() {
+
+        if (graphSize == 0) {
+            return false;
+        }
+
+        if (Objects.equals(startNode, targetNode)) {
+            return false;
+        }
+
+        return startNode != null && targetNode != null;
+    }
 
     public void addListener(GraphChangeListener listener) {
         listeners.add(listener);
