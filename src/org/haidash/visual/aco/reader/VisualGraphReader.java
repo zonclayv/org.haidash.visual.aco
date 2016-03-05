@@ -1,12 +1,5 @@
 package org.haidash.visual.aco.reader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
 import org.haidash.visual.aco.AcoRuntimeException;
@@ -14,15 +7,29 @@ import org.haidash.visual.aco.algorithm.graph.Graph;
 import org.haidash.visual.aco.algorithm.graph.entity.Link;
 import org.haidash.visual.aco.algorithm.graph.entity.Node;
 import org.haidash.visual.aco.algorithm.util.ACOParameters;
+import org.haidash.visual.aco.ui.Constants;
+import org.haidash.visual.aco.ui.model.VisualLink;
+import org.haidash.visual.aco.ui.model.VisualNode;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static org.haidash.visual.aco.ui.Constants.CIRCLE_RADIUS;
 
 
-public class GraphReader {
+public class VisualGraphReader {
+
+    private final static Logger LOGGER = Logger.getLogger(VisualGraphReader.class);
 
     private final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
-    private final Graph<Node, Link> graph;
+    private final Graph<VisualNode, VisualLink> graph;
 
-    public GraphReader(Graph<Node, Link> graph) {
+    public VisualGraphReader(Graph<VisualNode, VisualLink> graph) {
 
         this.graph = graph;
 
@@ -41,7 +48,7 @@ public class GraphReader {
         try (Scanner text = new Scanner(new FileReader(file))) {
 
             final int graphSize = text.nextInt();
-            final List<Node> nodes = new ArrayList<>(graphSize);
+            final List<VisualNode> nodes = new ArrayList<>(graphSize);
 
             graph.setGraphSize(graphSize);
             graph.setNodes(nodes);
@@ -55,11 +62,11 @@ public class GraphReader {
                 final int fuel = text.nextInt();
 
                 fuelLevels.add(fuel);
-                nodes.add(new Node(i, fuel));
+                nodes.add(new VisualNode(i, fuel));
             }
 
             final int linksSize = text.nextInt();
-            final List<Link> links = new ArrayList<>(linksSize);
+            final List<VisualLink> links = new ArrayList<>(linksSize);
 
             graph.setLinks(links);
 
@@ -68,16 +75,21 @@ public class GraphReader {
                 final int start = text.nextInt();
                 final int finish = text.nextInt();
 
-                final Node startNode = nodes.get(start);
-                final Node finishNode = nodes.get(finish);
+                final VisualNode startNode = nodes.get(start);
+                final VisualNode finishNode = nodes.get(finish);
 
-
-                final Link link = new Link(text.nextInt());
+                final VisualLink link = new VisualLink(text.nextInt());
                 link.setFirst(startNode);
                 link.setSecond(finishNode);
                 links.add(link);
+                link.getLine().startXProperty().bind(startNode.getPane().layoutXProperty().add(CIRCLE_RADIUS));
+                link.getLine().startYProperty().bind(startNode.getPane().layoutYProperty().add(CIRCLE_RADIUS));
+
+                link.getLine().endXProperty().bind(finishNode.getPane().layoutXProperty().add(CIRCLE_RADIUS));
+                link.getLine().endYProperty().bind(finishNode.getPane().layoutYProperty().add(CIRCLE_RADIUS));
 
                 startNode.getOutgoingLinks().add(link);
+                finishNode.getIngoingLink().add(link);
             }
 
             ACO_PARAMETERS.setMaxFuelLevels(text.nextInt());

@@ -11,9 +11,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.haidash.visual.aco.algorithm.aco.entity.ACOParameters;
-import org.haidash.visual.aco.algorithm.aco.entity.Graph;
+import org.haidash.visual.aco.algorithm.util.ACOParameters;
 import org.haidash.visual.aco.ui.GraphChangeListener;
+import org.haidash.visual.aco.ui.model.VisualGraph;
 
 /**
  * Author Aleh Haidash.
@@ -21,13 +21,13 @@ import org.haidash.visual.aco.ui.GraphChangeListener;
 public class SettingsBox extends VBox implements GraphChangeListener {
 
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
-    private final Graph graph;
+    private final VisualGraph graph;
     private final Spinner<Integer> fromSpinner;
     private final Spinner<Integer> toSpinner;
 
-    public SettingsBox(RootScene rootScene) {
+    public SettingsBox(VisualGraph graph) {
 
-        this.graph = rootScene.getGraph();
+        this.graph =graph;
         this.graph.addListener(this);
 
         setMinWidth(250);

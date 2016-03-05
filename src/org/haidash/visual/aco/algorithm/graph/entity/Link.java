@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.algorithm.aco.entity;
+package org.haidash.visual.aco.algorithm.graph.entity;
 
 public class Link {
 

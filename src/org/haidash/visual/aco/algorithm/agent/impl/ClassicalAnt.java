@@ -1,9 +1,12 @@
-package org.haidash.visual.aco.algorithm.aco.impl;
+package org.haidash.visual.aco.algorithm.agent.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.apache.log4j.Logger;
-import org.haidash.visual.aco.algorithm.aco.Agent;
-import org.haidash.visual.aco.algorithm.aco.entity.*;
+import org.haidash.visual.aco.algorithm.util.ACOParameters;
+import org.haidash.visual.aco.algorithm.agent.Agent;
+import org.haidash.visual.aco.algorithm.graph.Graph;
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
+import org.haidash.visual.aco.algorithm.graph.entity.ReachableLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +14,13 @@ import java.util.Random;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
-import static org.haidash.visual.aco.algorithm.aco.ACOUtils.findCycle;
 
 /**
  * @author Haidash Aleh
  */
 public class ClassicalAnt implements Agent {
 
-    private final static Logger LOGGER = Logger.getLogger(ClassicalAnt.class);
+    //    private final static Logger LOGGER = Logger.getLogger(ClassicalAnt.class);
     private final static Random RANDOM = new Random(System.nanoTime());
 
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
@@ -63,34 +65,9 @@ public class ClassicalAnt implements Agent {
         currentNode = link.getSecond();
     }
 
-    private boolean applyPath(final Cycle cycle) {
-
-        if (cycle == null) {
-            return false;
-        }
-
-        for (Link link : cycle.getLinks()) {
-
-            final int fuelCost = link.getWeight();
-            final int availableFuel = getAvailableFuel();
-
-            if (availableFuel < fuelCost) {
-                outOfFuel = true;
-                return false;
-            }
-
-            final int usedFuel = availableFuel - fuelBalance;
-
-            addNextNode(usedFuel, link);
-        }
-
-        return true;
-    }
-
     private List<ReachableLink> findReachableLinks() {
 
         final List<ReachableLink> reachableLinks = new ArrayList<>();
-        final Cycle cycle = graph.getCycles().get(currentNode);
 
         double sum = -1.0;
 
@@ -99,19 +76,7 @@ public class ClassicalAnt implements Agent {
             final int availableFuel = getAvailableFuel();
 
             if (availableFuel >= link.getWeight()) {
-                if (graph.isBadPath(path, link)) {
-                    continue;
-                }
-            } else {
-                if (cycle == null) {
-                    continue;
-                }
-
-                final int fuelAfterCycle = getFuelAfterCycle(availableFuel, cycle.getFuel());
-
-                if ((fuelAfterCycle < link.getWeight()) || graph.isBadPath(path, cycle.getLinks(), link)) {
-                    continue;
-                }
+                continue;
             }
 
             final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
@@ -119,7 +84,7 @@ public class ClassicalAnt implements Agent {
             final double etaVisits = link.getVisitsCount() == 0 ? ACO_PARAMETERS.getNumAnts().get() : (ACO_PARAMETERS.getNumAnts().get() / powBetaValue);
             final double etaCost = ACO_PARAMETERS.getQ().get() / powAlphaValue;
 
-            double etaRemaning = 0d;
+            double etaRemaning;
 
             final double k = (availableFuel - link.getWeight()) + remainsFuel.get(link.getSecond().getNumber());
 
@@ -142,7 +107,7 @@ public class ClassicalAnt implements Agent {
             final double tau = link.getPPheromone() / link.getNPheromone();
 
             if (sum == -1.0) {
-                sum = getSumProbabilities(cycle);
+                sum = getSumProbabilities();
             }
 
             final double probability = 100 * ((pow(tau, ACO_PARAMETERS.getAlpha().get()) * eta) / sum);
@@ -177,23 +142,6 @@ public class ClassicalAnt implements Agent {
         return allFuel > maxFuelLevels ? maxFuelLevels : allFuel;
     }
 
-    private int getFuelAfterCycle(final int availableFuel, final int fuelInCycle) {
-
-        final int fuelInNode = tempFuelLevel.get(currentNode.getNumber());
-        final int maxFuelLevels = ACO_PARAMETERS.getMaxFuelLevels();
-        final int allFuel = fuelBalance + fuelInNode;
-
-        int tempFuel;
-
-        if (allFuel > maxFuelLevels) {
-            tempFuel = maxFuelLevels - availableFuel;
-        } else {
-            tempFuel = allFuel - availableFuel;
-        }
-
-        return tempFuel + fuelInCycle;
-    }
-
     @Override
     public List<Link> getPath() {
         return path;
@@ -204,7 +152,7 @@ public class ClassicalAnt implements Agent {
         return spentFuelLevel;
     }
 
-    private double getSumProbabilities(final Cycle cycle) {
+    private double getSumProbabilities() {
 
         double sum = 0.0;
 
@@ -213,20 +161,7 @@ public class ClassicalAnt implements Agent {
             final int availableFuel = getAvailableFuel();
 
             if (availableFuel >= link.getWeight()) {
-                if (graph.isBadPath(path, link)) {
-                    continue;
-                }
-            } else {
-                if (cycle == null) {
-                    continue;
-                }
-
-                final int fuelAfterCycle = availableFuel + cycle.getFuel();
-                final List<Link> links = cycle.getLinks();
-
-                if (link.equals(links.get(0)) || (fuelAfterCycle < link.getWeight()) || graph.isBadPath(path, links, link)) {
-                    continue;
-                }
+                continue;
             }
 
             final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
@@ -282,30 +217,6 @@ public class ClassicalAnt implements Agent {
 
     private void selectNode() {
 
-        final Object property = currentNode.getProperty("Path");
-
-        if (property != null && RANDOM.nextBoolean()) {
-
-            final List<Link> links = (List<Link>) property;
-
-            for (Link link : links) {
-
-                final int futureFuelBalance = getAvailableFuel() - link.getWeight();
-
-                if (futureFuelBalance < 0 && getAvailableFuel() <= 0) {
-                    outOfFuel = true;
-                    return;
-                } else if (futureFuelBalance < 0) {
-                    break;
-                }
-
-//                LOGGER.debug("Using scout ant path: from "+link.getFirst().getNumber()+" to "+link.getSecond().getNumber());
-
-                final int usedFuel = getAvailableFuel() - fuelBalance;
-                addNextNode(usedFuel, link);
-            }
-        }
-
         final List<ReachableLink> reachableLinks = findReachableLinks();
 
         final Node targetNode = graph.getTargetNode();
@@ -316,8 +227,6 @@ public class ClassicalAnt implements Agent {
 
         if (reachableLinks.isEmpty() || outOfFuel) {
             outOfFuel = true;
-            graph.getBadPaths().add(this.path);
-
             return;
         }
 
@@ -342,30 +251,9 @@ public class ClassicalAnt implements Agent {
             }
 
             final Link link = reachableLink.getLink();
-            final int futureFuelBalance = getAvailableFuel() - link.getWeight();
-
-            if (futureFuelBalance < 0) {
-
-                final Cycle cycle = graph.getCycles().get(currentNode);
-
-                if ((cycle != null) && !applyPath(cycle)) {
-                    graph.getCycles().remove(currentNode);
-                }
-
-                outOfFuel = true;
-                graph.getBadPaths().add(this.path);
-
-                return;
-            }
-
             final int usedFuel = getAvailableFuel() - fuelBalance;
-            final Cycle newCycle = findCycle(link, this.path);
 
             addNextNode(usedFuel, link);
-
-            if (newCycle != null) {
-                graph.addCycle(newCycle);
-            }
 
             return;
         }

@@ -1,6 +1,9 @@
-package org.haidash.visual.aco.algorithm.aco.entity;
+package org.haidash.visual.aco.algorithm.preprocessing;
 
 import com.carrotsearch.hppc.IntArrayList;
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.Graph;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +12,7 @@ import static java.lang.Integer.MAX_VALUE;
 
 public class FloydWarshall {
 
-    private static void calculate(final Graph graph, final int maxFuel) {
+    private static void calculate(final Graph<? extends Node, ? extends Link> graph, final int maxFuel) {
 
         final int graphSize = graph.getGraphSize();
 
@@ -41,7 +44,7 @@ public class FloydWarshall {
             prevNode.add(prev);
         }
 
-        final List<Link> links = graph.getLinks();
+        final List<? extends Link> links = graph.getLinks();
 
         for (Link link : links) {
 
@@ -113,7 +116,7 @@ public class FloydWarshall {
         return prevNode.get(start).get(finish);
     }
 
-    public static IntArrayList getRemainsFuel(final Graph graph, final int maxFuel) {
+    public static IntArrayList getRemainsFuel(final Graph<? extends Node, ? extends Link> graph, final int maxFuel) {
 
         clear();
         calculate(graph, maxFuel);

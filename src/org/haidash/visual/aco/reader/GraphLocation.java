@@ -1,37 +1,48 @@
 package org.haidash.visual.aco.reader;
 
-import org.haidash.visual.aco.algorithm.aco.entity.Graph;
-import org.haidash.visual.aco.algorithm.aco.entity.Link;
-import org.haidash.visual.aco.algorithm.aco.entity.Node;
-import org.haidash.visual.aco.algorithm.aco.entity.Pair;
-import org.haidash.visual.aco.ui.pane.GraphPane;
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
+import org.haidash.visual.aco.algorithm.util.Pair;
+import org.haidash.visual.aco.ui.Constants;
+import org.haidash.visual.aco.ui.model.VisualGraph;
+import org.haidash.visual.aco.ui.model.VisualNode;
 
 import java.util.*;
+
+import static org.haidash.visual.aco.ui.Constants.GRID_ITEM_HEIGHT;
+import static org.haidash.visual.aco.ui.Constants.GRID_ITEM_WIDTH;
 
 /**
  * Created by haidash on 05.03.16.
  */
 public class GraphLocation {
 
-    private Graph graph;
+    private final static Random RANDOM = new Random(System.nanoTime());
+    public static final int NODE_AREA_WIDTH = GRID_ITEM_HEIGHT * 10;
+    public static final int NODE_AREA_HEIGHT = GRID_ITEM_HEIGHT * 5;
+
+    private VisualGraph graph;
     private int maxChildrenCount;
 
-    private Map<Node, Integer> levelCount;
+    private Map<Integer, Integer> childrenCount;
+    private Map<Integer, List<Node>> levelCount;
 
-    public GraphLocation(Graph graph) {
+    public GraphLocation(VisualGraph graph) {
         this.graph = graph;
-        this.levelCount = new HashMap<>();
+        this.childrenCount = new HashMap<>(graph.getGraphSize());
+        this.levelCount = new HashMap<>(graph.getGraphSize());
 
-        fillLevelCount(graph.getStartNode(), new HashSet<>());
+        final VisualNode startNode = graph.getStartNode();
+        final HashSet<Node> used = new HashSet<>();
+        used.add(startNode);
+
+        fillLevelCount(startNode, 1, used);
     }
 
-    private void fillLevelCount(Node node, Set<Node> used) {
-
-        used.add(node);
+    private void fillLevelCount(Node node, int level, Set<Node> used) {
 
         final List<Link> links = node.getOutgoingLinks();
-
-        int count = 0;
+        final List<Node> children = new ArrayList<>();
 
         for (Link link : links) {
 
@@ -41,25 +52,22 @@ public class GraphLocation {
                 continue;
             }
 
-            count++;
+            used.add(child);
+            children.add(child);
         }
+
+        int count = children.size();
 
         if (maxChildrenCount < count) {
             maxChildrenCount = count;
         }
 
-        levelCount.put(node, count);
+        final Integer value = childrenCount.get(level);
+        childrenCount.put(level, value == null ? count : value + count);
+        levelCount.put(level, new ArrayList<>());
 
-
-        for (Link link : links) {
-
-            final Node child = link.getSecond();
-
-            if (used.contains(child)) {
-                continue;
-            }
-
-            fillLevelCount(child, used);
+        for (Node child : children) {
+            fillLevelCount(child, level + 1, used);
         }
 
     }
@@ -67,7 +75,7 @@ public class GraphLocation {
     public void locate() {
 
         final Node startNode = graph.getStartNode();
-        final int maxWidth = GraphPane.GRID_ITEM_HEIGHT * 10 * maxChildrenCount;
+        final int maxWidth = NODE_AREA_WIDTH * maxChildrenCount;
 
         setLocation(startNode, 0, maxWidth / 2);
 
@@ -79,19 +87,18 @@ public class GraphLocation {
 
     private void prepareLocation(Node node, int level, Set<Node> used) {
 
-        final int childrenCount = levelCount.get(node);
+        final int childrenCount = this.childrenCount.get(level);
 
         if (childrenCount == 0) {
             return;
         }
 
-        final int maxWidth = GraphPane.GRID_ITEM_HEIGHT * 10 * maxChildrenCount;
+        final int maxWidth = NODE_AREA_WIDTH * maxChildrenCount;
         final int width = maxWidth / childrenCount;
 
         final List<Link> links = node.getOutgoingLinks();
         final List<Node> children = new ArrayList<>();
 
-        int count = 1;
         for (Link link : links) {
 
             final Node child = link.getSecond();
@@ -100,12 +107,14 @@ public class GraphLocation {
                 continue;
             }
 
-            setLocation(child, level + 1, (count - 1) * width + width / 2);
+            final List<Node> added = levelCount.get(level);
+            final int size = added.size();
+
+            setLocation(child, level + 1, (size + 1) * width - width / 2);
 
             used.add(child);
             children.add(child);
-
-            count++;
+            added.add(child);
         }
 
         for (Node child : children) {
@@ -115,9 +124,12 @@ public class GraphLocation {
 
     private void setLocation(Node node, int level, int offset) {
 
+        final Double alpha = (-0.9 + (1.8) * RANDOM.nextDouble());
+        final Double beta = (-0.9 + (1.8) * RANDOM.nextDouble());
+
         final Pair<Integer, Integer> location = node.getLocation();
-        location.first = offset;
-        location.second = level == 0 ? GraphPane.GRID_ITEM_HEIGHT : GraphPane.GRID_ITEM_HEIGHT * level * 5;
+        location.first = (level == 0) ? offset : offset + (int) (GRID_ITEM_WIDTH * 2 * alpha);
+        location.second = (level == 0) ? GRID_ITEM_HEIGHT : (NODE_AREA_HEIGHT * level) + (int) (1 * GRID_ITEM_HEIGHT * beta);
 
         if (location.first > graph.getMaxX()) {
             graph.setMaxX(location.first);
@@ -127,4 +139,5 @@ public class GraphLocation {
             graph.setMaxY(location.second);
         }
     }
+
 }

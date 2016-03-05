@@ -1,8 +1,12 @@
-package org.haidash.visual.aco.algorithm.aco.impl;
+package org.haidash.visual.aco.algorithm.agent.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.haidash.visual.aco.algorithm.aco.Agent;
-import org.haidash.visual.aco.algorithm.aco.entity.*;
+import org.haidash.visual.aco.algorithm.util.ACOParameters;
+import org.haidash.visual.aco.algorithm.agent.Agent;
+import org.haidash.visual.aco.algorithm.graph.Graph;
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
+import org.haidash.visual.aco.algorithm.graph.entity.ReachableLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ public class ScoutAnt implements Agent {
 
     private boolean outOfFuel = false;
 
-    public ScoutAnt(final Graph graph) {
+    public ScoutAnt(final Graph<Node, Link> graph) {
         this.graph = graph;
 
         final int nodeIndex = getNodeIndex(graph);

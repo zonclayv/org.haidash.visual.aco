@@ -10,13 +10,19 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.algorithm.aco.ACOUtils;
-import org.haidash.visual.aco.algorithm.aco.entity.Graph;
-import org.haidash.visual.aco.algorithm.aco.entity.SearchResult;
+import org.haidash.visual.aco.algorithm.AntColony;
+import org.haidash.visual.aco.algorithm.graph.Graph;
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
+import org.haidash.visual.aco.algorithm.util.Utils;
+import org.haidash.visual.aco.algorithm.util.SearchResult;
 import org.haidash.visual.aco.reader.GraphLocation;
 import org.haidash.visual.aco.reader.GraphReader;
+import org.haidash.visual.aco.reader.VisualGraphReader;
+import org.haidash.visual.aco.ui.model.VisualGraph;
 
 import java.io.File;
+import java.net.URL;
 import java.util.concurrent.*;
 
 import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
@@ -30,14 +36,14 @@ public class CentralBox extends VBox {
 
     private final ExecutorService pool = Executors.newSingleThreadExecutor();
 
-    private final Graph graph;
+    private final VisualGraph graph;
 
     private TextField fileBrowseText;
     private GraphPane graphPane;
 
-    public CentralBox(RootScene rootScene) {
+    public CentralBox(VisualGraph graph) {
 
-        this.graph = rootScene.getGraph();
+        this.graph = graph;
 
         setPadding(new Insets(5, 5, 0, 5));
         setAlignment(Pos.TOP_CENTER);
@@ -81,14 +87,18 @@ public class CentralBox extends VBox {
     private void findPath() {
 
         if (!graph.isReady()) {
-            final Alert alert = new Alert(Alert.AlertType.WARNING, "Graph is not ready");
+            final Alert alert = new Alert(Alert.AlertType.WARNING, "ClassicalGraph is not ready");
             alert.showAndWait();
             return;
         }
 
         graph.clear();
 
-        final Callable<SearchResult> search = () -> ACOUtils.runACO(graph);
+        final Callable<SearchResult> search = () -> {
+            AntColony antColony = new AntColony(graph);
+            return antColony.run();
+        };
+
         final Future<SearchResult> future = pool.submit(search);
 
         try {
@@ -112,11 +122,11 @@ public class CentralBox extends VBox {
 
             fileBrowseText.setText(file.getAbsolutePath());
 
-            final GraphReader fileReader = new GraphReader(graph);
+            final VisualGraphReader fileReader = new VisualGraphReader(graph);
 
             try {
                 fileReader.read(file);
-                LOGGER.info("Graph initialized...");
+                LOGGER.info("ClassicalGraph initialized...");
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
             }

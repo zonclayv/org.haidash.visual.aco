@@ -1,4 +1,7 @@
-package org.haidash.visual.aco.algorithm.aco.entity;
+package org.haidash.visual.aco.algorithm.graph.cycle;
+
+import org.haidash.visual.aco.algorithm.graph.entity.Link;
+import org.haidash.visual.aco.algorithm.graph.entity.Node;
 
 import java.util.List;
 

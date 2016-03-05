@@ -1,4 +1,6 @@
-package org.haidash.visual.aco.algorithm.aco.entity;
+package org.haidash.visual.aco.algorithm.graph.entity;
+
+import org.haidash.visual.aco.algorithm.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,11 +14,13 @@ public class Node {
     private int fuelBalance;
     private Map<String, Object> properties;
     private final List<Link> outgoingLink;
+    private final List<Link> ingoingLink;
 
     public Node(final int number, final int fuelBalance) {
         this.number = number;
         this.fuelBalance = fuelBalance;
         this.outgoingLink = new ArrayList<>();
+        this.ingoingLink = new ArrayList<>();
         this.properties = new HashMap<>();
         this.location = new Pair<>(0, 0);
     }
@@ -99,5 +103,9 @@ public class Node {
 
     public void setLocation(Pair<Integer, Integer> location) {
         this.location = location;
+    }
+
+    public List<Link> getIngoingLink() {
+        return ingoingLink;
     }
 }

@@ -10,8 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.haidash.visual.aco.algorithm.aco.entity.Graph;
 import org.haidash.visual.aco.ui.TextAreaAppender;
+import org.haidash.visual.aco.ui.model.VisualGraph;
 
 import static javafx.geometry.Pos.CENTER;
 import static javafx.geometry.Pos.TOP_CENTER;
@@ -24,12 +24,12 @@ public class RootScene extends Scene {
     private RadioMenuItem simulateItem;
     private RadioMenuItem reportItem;
 
-    private Graph graph;
+    private VisualGraph graph;
 
     public RootScene(final Group group, final double v, final double v1) {
         super(group, v, v1);
 
-        this.graph = new Graph();
+        this.graph = new VisualGraph();
 
         final VBox generalVBox = new VBox();
         generalVBox.setAlignment(TOP_CENTER);
@@ -96,11 +96,11 @@ public class RootScene extends Scene {
         final VBox generalVBox = new VBox();
         generalVBox.setAlignment(Pos.TOP_CENTER);
 
-        final VBox settingsBox = new SettingsBox(this);
+        final VBox settingsBox = new SettingsBox(graph);
         settingsBox.prefHeightProperty().bind(heightProperty());
         settingsBox.visibleProperty().bind(simulateItem.selectedProperty());
 
-        final VBox centralVBox = new CentralBox(this);
+        final VBox centralVBox = new CentralBox(graph);
         centralVBox.prefWidthProperty().bind(widthProperty().subtract(settingsBox.getPrefWidth()));
         centralVBox.visibleProperty().bind(simulateItem.selectedProperty());
 
@@ -114,9 +114,5 @@ public class RootScene extends Scene {
         TextAreaAppender.setTextArea(textLog);
 
         parent.getChildren().add(generalVBox);
-    }
-
-    public Graph getGraph() {
-        return graph;
     }
 }
