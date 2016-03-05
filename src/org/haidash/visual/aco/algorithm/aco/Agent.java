@@ -1,8 +1,7 @@
-package org.haidash.visual.aco.model;
+package org.haidash.visual.aco.algorithm.aco;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.haidash.visual.aco.model.entity.Link;
-import org.haidash.visual.aco.model.entity.Node;
+import org.haidash.visual.aco.algorithm.aco.entity.Link;
 
 import java.util.List;
 

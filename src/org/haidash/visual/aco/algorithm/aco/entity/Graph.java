@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.model.entity;
+package org.haidash.visual.aco.algorithm.aco.entity;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.haidash.visual.aco.ui.GraphChangeListener;
@@ -8,6 +8,9 @@ import java.util.*;
 public class Graph {
 
     private List<GraphChangeListener> listeners;
+
+    private int maxX;
+    private int maxY;
 
     private int graphSize;
 
@@ -184,5 +187,21 @@ public class Graph {
                 + "\n"
                 + "Arcs: \n"
                 + links.toString();
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(int maxX) {
+        this.maxX = maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(int maxY) {
+        this.maxY = maxY;
     }
 }

@@ -10,13 +10,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.ACOUtils;
-import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.ACOUtils;
+import org.haidash.visual.aco.algorithm.aco.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.entity.SearchResult;
+import org.haidash.visual.aco.reader.GraphLocation;
 import org.haidash.visual.aco.reader.GraphReader;
-import org.haidash.visual.aco.ui.TextAreaAppender;
 
-import javax.annotation.processing.Messager;
 import java.io.File;
+import java.util.concurrent.*;
 
 import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 
@@ -26,9 +27,13 @@ import static javafx.scene.input.MouseEvent.MOUSE_CLICKED;
 public class CentralBox extends VBox {
 
     private final static Logger LOGGER = Logger.getLogger(CentralBox.class);
+
+    private final ExecutorService pool = Executors.newSingleThreadExecutor();
+
     private final Graph graph;
 
     private TextField fileBrowseText;
+    private GraphPane graphPane;
 
     public CentralBox(RootScene rootScene) {
 
@@ -64,7 +69,7 @@ public class CentralBox extends VBox {
 
         getChildren().add(hBox);
 
-        final GraphPane graphPane = new GraphPane(graph);
+        graphPane = new GraphPane(graph);
         graphPane.prefWidthProperty().bind(prefWidthProperty());
         graphPane.prefHeightProperty().bind(heightProperty().subtract(hBox.heightProperty()));
 
@@ -83,9 +88,17 @@ public class CentralBox extends VBox {
 
         graph.clear();
 
-        new Thread(() -> {
-            ACOUtils.runACO(graph);
-        }).start();
+        final Callable<SearchResult> search = () -> ACOUtils.runACO(graph);
+        final Future<SearchResult> future = pool.submit(search);
+
+        try {
+            final SearchResult result = future.get();
+            if (result != null) {
+                graphPane.markPath(result.getPath());
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error(e);
+        }
     }
 
     private void openFile() {
@@ -103,14 +116,17 @@ public class CentralBox extends VBox {
 
             try {
                 fileReader.read(file);
-
-                graph.fireListener();
-
                 LOGGER.info("Graph initialized...");
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
             }
 
+            final GraphLocation graphLocation = new GraphLocation(graph);
+            graphLocation.locate();
+
+            LOGGER.info("All nodes located...");
+
+            graph.fireListener();
         }
     }
 }

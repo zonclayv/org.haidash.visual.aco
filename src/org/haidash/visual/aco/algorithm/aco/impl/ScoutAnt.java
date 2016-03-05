@@ -1,14 +1,12 @@
-package org.haidash.visual.aco.model.impl;
+package org.haidash.visual.aco.algorithm.aco.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
-import org.haidash.visual.aco.model.Agent;
-import org.haidash.visual.aco.model.entity.*;
+import org.haidash.visual.aco.algorithm.aco.Agent;
+import org.haidash.visual.aco.algorithm.aco.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import static org.haidash.visual.aco.model.ACOUtils.findCycle;
 
 /**
  * Created by zonclayv on 01.08.15.

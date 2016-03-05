@@ -10,7 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.entity.Graph;
 import org.haidash.visual.aco.ui.TextAreaAppender;
 
 import static javafx.geometry.Pos.CENTER;

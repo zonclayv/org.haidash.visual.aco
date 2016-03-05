@@ -2,8 +2,6 @@ package org.haidash.visual.aco.ui.pane;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -13,12 +11,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import org.haidash.visual.aco.model.entity.ACOParameters;
-import org.haidash.visual.aco.model.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.entity.ACOParameters;
+import org.haidash.visual.aco.algorithm.aco.entity.Graph;
 import org.haidash.visual.aco.ui.GraphChangeListener;
-
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 /**
  * Author Aleh Haidash.

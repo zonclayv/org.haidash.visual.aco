@@ -1,12 +1,12 @@
-package org.haidash.visual.aco.model;
+package org.haidash.visual.aco.algorithm.aco;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.entity.ACOParameters;
-import org.haidash.visual.aco.model.entity.Graph;
-import org.haidash.visual.aco.model.entity.Link;
-import org.haidash.visual.aco.model.entity.SearchResult;
-import org.haidash.visual.aco.model.impl.ClassicalAnt;
+import org.haidash.visual.aco.algorithm.aco.entity.ACOParameters;
+import org.haidash.visual.aco.algorithm.aco.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.entity.Link;
+import org.haidash.visual.aco.algorithm.aco.entity.SearchResult;
+import org.haidash.visual.aco.algorithm.aco.impl.ClassicalAnt;
 
 import java.util.ArrayList;
 import java.util.List;

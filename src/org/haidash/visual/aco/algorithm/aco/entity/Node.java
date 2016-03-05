@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.model.entity;
+package org.haidash.visual.aco.algorithm.aco.entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;

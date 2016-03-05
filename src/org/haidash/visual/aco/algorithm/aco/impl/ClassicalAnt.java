@@ -1,9 +1,9 @@
-package org.haidash.visual.aco.model.impl;
+package org.haidash.visual.aco.algorithm.aco.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.Agent;
-import org.haidash.visual.aco.model.entity.*;
+import org.haidash.visual.aco.algorithm.aco.Agent;
+import org.haidash.visual.aco.algorithm.aco.entity.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.Random;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
-import static org.haidash.visual.aco.model.ACOUtils.findCycle;
+import static org.haidash.visual.aco.algorithm.aco.ACOUtils.findCycle;
 
 /**
  * @author Haidash Aleh

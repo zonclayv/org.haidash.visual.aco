@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.model.entity;
+package org.haidash.visual.aco.algorithm.aco.entity;
 
 public class Pair<T, P> {
 

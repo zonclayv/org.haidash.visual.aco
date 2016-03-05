@@ -2,19 +2,17 @@ package org.haidash.visual.aco.ui.pane;
 
 import java.util.*;
 
-import com.sun.javafx.geom.BaseBounds;
-import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.jmx.MXNodeAlgorithm;
-import com.sun.javafx.jmx.MXNodeAlgorithmContext;
-import com.sun.javafx.sg.prism.NGNode;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -26,10 +24,10 @@ import javafx.scene.shape.Path;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 import javafx.util.Duration;
-import org.haidash.visual.aco.model.entity.Graph;
-import org.haidash.visual.aco.model.entity.Link;
-import org.haidash.visual.aco.model.entity.Node;
-import org.haidash.visual.aco.model.entity.Pair;
+import org.haidash.visual.aco.algorithm.aco.entity.Graph;
+import org.haidash.visual.aco.algorithm.aco.entity.Link;
+import org.haidash.visual.aco.algorithm.aco.entity.Node;
+import org.haidash.visual.aco.algorithm.aco.entity.Pair;
 import org.haidash.visual.aco.ui.GraphChangeListener;
 
 import static javafx.scene.input.MouseButton.PRIMARY;
@@ -42,6 +40,8 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
 
     public static final int GRID_ITEM_WIDTH = 16;
     public static final int GRID_ITEM_HEIGHT = 20;
+
+    private final double SCALE_DELTA = 1.1;
 
     private final Path verticalGridLines = new Path();
     private final Path horizontalGridLines = new Path();
@@ -60,14 +60,32 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
         pane = new Pane();
         pane.getStyleClass().setAll(new String[]{"chart-plot-background"});
 
-        pane.prefHeightProperty().bind(heightProperty().subtract(5));
-        pane.prefWidthProperty().bind(widthProperty().subtract(5));
+//        pane.prefHeightProperty().bind(heightProperty().subtract(5));
+//        pane.prefWidthProperty().bind(widthProperty().subtract(5));
 
         ChangeListener<Number> resizeLister =
-                (final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) -> fillBackground(pane);
+                (final ObservableValue<? extends Number> observable, final Number oldValue, final Number newValue) -> fillBackground();
 
-        pane.widthProperty().addListener(resizeLister);
-        pane.heightProperty().addListener(resizeLister);
+        widthProperty().addListener(resizeLister);
+        heightProperty().addListener(resizeLister);
+
+
+        pane.getChildren().addAll(new javafx.scene.Node[]{verticalGridLines, horizontalGridLines});
+        pane.setOnScroll(new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+                event.consume();
+
+                if (event.getDeltaY() == 0) {
+                    return;
+                }
+
+                double scaleFactor = (event.getDeltaY() > 0) ? SCALE_DELTA : 1 / SCALE_DELTA;
+
+                pane.setScaleX(pane.getScaleX() * scaleFactor);
+                pane.setScaleY(pane.getScaleY() * scaleFactor);
+            }
+        });
 
         setContent(pane);
     }
@@ -87,18 +105,23 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
 
         final MouseButton button = event.getButton();
 
+        final Node node = graph.getNode(number);
+
+
         if (button.equals(PRIMARY)) {
-            graph.setStartNode(graph.getNode(number));
 
-            if (number == targetNode.getNumber()) {
-                graph.setTargetNode(null);
+            if (Objects.equals(node, targetNode)) {
+                graph.setTargetNode(startNode);
             }
+
+            graph.setStartNode(node);
         } else if (button.equals(SECONDARY)) {
-            graph.setTargetNode(graph.getNode(number));
 
-            if (number == startNode.getNumber()) {
-                graph.setTargetNode(null);
+            if (Objects.equals(node, startNode)) {
+                graph.setStartNode(targetNode);
             }
+
+            graph.setTargetNode(node);
         }
 
         fillCircle(startNode);
@@ -115,11 +138,13 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
         circle.setRadius(10);
         circle.setUserData(node.getNumber());
 
+        circles.put(node, circle);
+
         fillCircle(node);
 
         StackPane layout = new StackPane();
-        layout.setLayoutX((node.getLocation().first * GRID_ITEM_WIDTH) - 10);
-        layout.setLayoutY((node.getLocation().second * GRID_ITEM_HEIGHT) - 10);
+        layout.setLayoutX(node.getLocation().first - 10);
+        layout.setLayoutY(node.getLocation().second - 10);
         layout.setCursor(Cursor.HAND);
         layout.setOnMouseClicked((final MouseEvent event) -> changeVertexStatus(event, circle));
         layout.getChildren().addAll(circle, text);
@@ -135,51 +160,45 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
 
     public void drawGraph() {
 
-//        final AcoProperties properties = AcoProperties.getInstance();
-//
-//        final int[][] nodesMap = properties.getNodesMap();
-//        final Pair<Integer, Integer>[] verticesMap = properties.getVerticesMap();
-//
-//        final int numNodes = properties.getNumNodes();
-//
-//        lines = new Line[numNodes][numNodes];
-//
-//        for (int i = 0; i < numNodes; i++) {
-//            for (int j = 0; j < numNodes; j++) {
-//
-//                if (nodesMap[i][j] <= 0) {
-//                    continue;
-//                }
-//
-//                Pair<Integer, Integer> from = verticesMap[i];
-//                Pair<Integer, Integer> to = verticesMap[j];
-//
-//                Line line =
-//                        new Line(from.first * GRID_ITEM_WIDTH, from.second * GRID_ITEM_HEIGHT, to.first * GRID_ITEM_WIDTH, to.second
-//                                * GRID_ITEM_HEIGHT);
-//                line.setFill(null);
-//                line.setStroke(Color.GREY);
-//                line.setStrokeWidth(1);
-//
-//                lines[i][j] = line;
-//
-//                pane.getChildren().add(line);
-//            }
-//        }
-//
-//        circles = new Circle[numNodes];
-//
-//        for (int i = 0; i < verticesMap.length; i++) {
-//            createCircle(pane, verticesMap[i], i);
-//        }
+        final ObservableList<javafx.scene.Node> children = pane.getChildren();
+        if (children.size() > 2) {
+            children.remove(3, children.size());
+        }
+
+        fillBackground();
+
+        lines.clear();
+
+        for (Link link : graph.getLinks()) {
+            final Node first = link.getFirst();
+            final Node second = link.getSecond();
+
+            final Pair<Integer, Integer> from = first.getLocation();
+            final Pair<Integer, Integer> to = second.getLocation();
+
+            final Line line = new Line(from.first, from.second, to.first, to.second);
+            line.setFill(null);
+            line.setStroke(Color.GREY);
+            line.setStrokeWidth(1);
+
+            lines.put(link, line);
+
+            children.add(line);
+        }
+
+        circles.clear();
+
+        for (Node node : graph.getNodes()) {
+            createCircle(pane, node);
+        }
+
+        pane.layout();
     }
 
-    private final void fillBackground(final Pane pane) {
+    private final void fillBackground() {
 
         verticalGridLines.getElements().clear();
         horizontalGridLines.getElements().clear();
-
-        pane.getChildren().clear();
 
         for (int i = 0; i < pane.getPrefHeight(); i += GRID_ITEM_HEIGHT) {
             verticalGridLines.getElements().add(new MoveTo(0, i));
@@ -193,8 +212,6 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
 
         verticalGridLines.getStyleClass().setAll(new String[]{"chart-vertical-grid-lines"});
         horizontalGridLines.getStyleClass().setAll(new String[]{"chart-horizontal-grid-lines"});
-
-        pane.getChildren().addAll(new javafx.scene.Node[]{verticalGridLines, horizontalGridLines});
     }
 
     private void fillCircle(final Node node) {
@@ -216,34 +233,35 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
         }
     }
 
-    public void markPath(final List<Node> visitedNodes) {
+    public void markPath(final List<Link> path) {
 
-        if (visitedNodes.size() < 2) {
+        if (path.size() < 1) {
             return;
         }
 
-        Node currentNode = visitedNodes.get(0);
+        Node currentNode = path.get(0).getFirst();
 
         final Circle circle = new Circle();
         circle.setRadius(10);
         circle.setStroke(Color.GREY);
         circle.setFill(Color.YELLOW);
-        circle.setLayoutX(currentNode.getLocation().first);
-        circle.setLayoutY(currentNode.getLocation().second);
+        circle.setLayoutX(currentNode.getLocation().first - 10-190);
+        circle.setLayoutY(currentNode.getLocation().second - 10);
 
         pane.getChildren().addAll(circle);
 
         SequentialTransition animation = new SequentialTransition();
         animation.setNode(circle);
 
-        for (int j = 1; j < visitedNodes.size(); j++) {
+        for (Link link : path) {
+            final Node fromNode = link.getFirst();
+            final Node toNode = link.getSecond();
 
-            final Node nextNode = visitedNodes.get(j);
             final TranslateTransition transition = new TranslateTransition();
-            transition.setFromX(currentNode.getLocation().first);
-            transition.setFromY(currentNode.getLocation().second);
-            transition.setToX(nextNode.getLocation().first);
-            transition.setToY(nextNode.getLocation().second);
+            transition.setFromX(fromNode.getLocation().first - 10-190);
+            transition.setFromY(fromNode.getLocation().second - 10);
+            transition.setToX(toNode.getLocation().first - 10-190);
+            transition.setToY(toNode.getLocation().second - 10);
             transition.setDelay(Duration.millis(50));
 
             animation.getChildren().add(transition);
@@ -257,6 +275,6 @@ public class GraphPane extends ScrollPane implements GraphChangeListener {
 
     @Override
     public void graphChanged() {
-
+        drawGraph();
     }
 }

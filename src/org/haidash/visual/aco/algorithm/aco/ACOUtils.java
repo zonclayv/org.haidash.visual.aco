@@ -1,11 +1,9 @@
-package org.haidash.visual.aco.model;
+package org.haidash.visual.aco.algorithm.aco;
 
 import com.carrotsearch.hppc.IntArrayList;
-import javafx.beans.property.SimpleIntegerProperty;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.model.entity.*;
-import org.haidash.visual.aco.model.impl.ClassicalAnt;
-import org.haidash.visual.aco.model.impl.ScoutAnt;
+import org.haidash.visual.aco.algorithm.aco.entity.*;
+import org.haidash.visual.aco.algorithm.aco.impl.ScoutAnt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ public class ACOUtils {
     private final static ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
 
-    public static void runACO(final Graph graph) {
+    public static SearchResult runACO(final Graph graph) {
 
         final long startTime = System.currentTimeMillis();
 
@@ -42,7 +40,7 @@ public class ACOUtils {
 
             if (isNewResult(globalResult, result)) {
                 globalResult = result;
-                LOGGER.info("New path (Population " + i+1 + ") " + result.getTotalCost() + " " + result.getPath());
+                LOGGER.info("New path (Population " + i + 1 + ") " + result.getTotalCost() + " " + result.getPath());
             }
         }
 
@@ -55,9 +53,11 @@ public class ACOUtils {
         } else {
             LOGGER.info("Best path: " + globalResult.getTotalCost());
         }
+
+        return globalResult;
     }
 
-    private static void processScoutAnts(final Graph graph){
+    private static void processScoutAnts(final Graph graph) {
         final int numAnts = ACO_PARAMETERS.getNumAnts().get();
 
         for (int j = 0; j < numAnts; j++) {
