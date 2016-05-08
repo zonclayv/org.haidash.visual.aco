@@ -11,9 +11,9 @@ import java.util.List;
 /**
  * Created by zonclayv on 17.07.15.
  */
-public class Utils {
+public class AlgorithmUtils {
 
-    private final static Logger LOGGER = Logger.getLogger(Utils.class);
+    private final static Logger LOGGER = Logger.getLogger(AlgorithmUtils.class);
     private final static ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     public static void processScoutAnts(final Graph graph) {

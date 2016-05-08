@@ -1,5 +1,6 @@
 package org.haidash.visual.aco.algorithm.util;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class ACOParameters {
@@ -11,6 +12,7 @@ public class ACOParameters {
     private final SimpleIntegerProperty q = new SimpleIntegerProperty(20);
     private final SimpleIntegerProperty numGeneration = new SimpleIntegerProperty(15);
     private final SimpleIntegerProperty numAnts = new SimpleIntegerProperty(30);
+    private final SimpleBooleanProperty animation = new SimpleBooleanProperty(true);
 
     private double pheromonePersistence = 0.5;
     private int maxFuelLevels = 6;
@@ -53,5 +55,7 @@ public class ACOParameters {
     public void setPheromonePersistence(final double pheromonePersistence) {
         this.pheromonePersistence = pheromonePersistence;
     }
-
+    public SimpleBooleanProperty getAnimation() {
+        return animation;
+    }
 }

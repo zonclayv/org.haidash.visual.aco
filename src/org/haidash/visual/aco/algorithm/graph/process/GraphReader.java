@@ -1,4 +1,4 @@
-package org.haidash.visual.aco.reader;
+package org.haidash.visual.aco.algorithm.graph.process;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,18 +18,19 @@ import org.haidash.visual.aco.algorithm.util.ACOParameters;
 
 public class GraphReader {
 
+    private final static Logger LOGGER = Logger.getLogger(GraphReader.class);
+
     private final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
-    private final Graph<Node, Link> graph;
+    private final Graph graph;
 
-    public GraphReader(Graph<Node, Link> graph) {
+    public GraphReader(Graph graph) {
 
         this.graph = graph;
 
         if (this.graph == null) {
             throw new AcoRuntimeException("Graph can not be empty!");
         }
-
     }
 
     public void read(final File file) {
@@ -71,13 +72,13 @@ public class GraphReader {
                 final Node startNode = nodes.get(start);
                 final Node finishNode = nodes.get(finish);
 
-
                 final Link link = new Link(text.nextInt());
                 link.setFirst(startNode);
                 link.setSecond(finishNode);
                 links.add(link);
 
                 startNode.getOutgoingLinks().add(link);
+                finishNode.getIngoingLink().add(link);
             }
 
             ACO_PARAMETERS.setMaxFuelLevels(text.nextInt());

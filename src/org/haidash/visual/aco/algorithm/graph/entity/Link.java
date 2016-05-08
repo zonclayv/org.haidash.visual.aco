@@ -1,6 +1,10 @@
 package org.haidash.visual.aco.algorithm.graph.entity;
 
+import org.haidash.visual.aco.ui.graph.LinkView;
+
 public class Link {
+
+    private LinkView view;
 
     private Node first;
     private Node second;
@@ -123,4 +127,16 @@ public class Link {
         return "[" + first.getNumber() + ", " + second.getNumber() + "]";
     }
 
+    public LinkView getView() {
+        return view;
+    }
+
+    public void setView(LinkView view) {
+        this.view = view;
+    }
+
+    public void clear() {
+        setNPheromone(1.0);
+        setPPheromone(1.0);
+    }
 }

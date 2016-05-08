@@ -4,7 +4,7 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.haidash.visual.aco.ui.pane.RootScene;
+import org.haidash.visual.aco.ui.pane.GlobalScene;
 
 
 public class VisualACOAplication extends Application {
@@ -16,9 +16,9 @@ public class VisualACOAplication extends Application {
     @Override
     public void start(final Stage stage) throws Exception {
 
-        Group root = new Group();
-        Scene scene = new RootScene(root, 900, 650);
+        final Group root = new Group();
 
+        final Scene scene = new GlobalScene(root, 900, 650);
         stage.setScene(scene);
         stage.setResizable(true);
         stage.show();

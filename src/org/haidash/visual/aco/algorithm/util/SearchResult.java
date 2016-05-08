@@ -14,6 +14,8 @@ public class SearchResult {
     private final List<Link> path;
     private final int totalCost;
 
+    private long runTime;
+
     public SearchResult(final Agent agent) {
         this.spentFuelLevel = new IntArrayList(agent.getSpentFuelLevel());
         this.path = new ArrayList<>(agent.getPath());
@@ -76,4 +78,11 @@ public class SearchResult {
         return result;
     }
 
+    public long getRunTime() {
+        return runTime;
+    }
+
+    public void setRunTime(long runTime) {
+        this.runTime = runTime;
+    }
 }

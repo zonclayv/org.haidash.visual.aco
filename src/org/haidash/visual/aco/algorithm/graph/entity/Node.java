@@ -1,6 +1,6 @@
 package org.haidash.visual.aco.algorithm.graph.entity;
 
-import org.haidash.visual.aco.algorithm.util.Pair;
+import org.haidash.visual.aco.ui.graph.NodeView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +9,9 @@ import java.util.Map;
 
 public class Node {
 
+    private NodeView view;
+
     private int number;
-    private Pair<Integer, Integer> location;
     private int fuelBalance;
     private Map<String, Object> properties;
     private final List<Link> outgoingLink;
@@ -22,7 +23,6 @@ public class Node {
         this.outgoingLink = new ArrayList<>();
         this.ingoingLink = new ArrayList<>();
         this.properties = new HashMap<>();
-        this.location = new Pair<>(0, 0);
     }
 
     @Override
@@ -90,22 +90,22 @@ public class Node {
 
     @Override
     public String toString() {
-        return "<" + number + ">";
+        return String.valueOf(number);
     }
 
     public void clear() {
         properties.clear();
     }
 
-    public Pair<Integer, Integer> getLocation() {
-        return location;
-    }
-
-    public void setLocation(Pair<Integer, Integer> location) {
-        this.location = location;
-    }
-
     public List<Link> getIngoingLink() {
         return ingoingLink;
+    }
+
+    public NodeView getView() {
+        return view;
+    }
+
+    public void setView(NodeView view) {
+        this.view = view;
     }
 }

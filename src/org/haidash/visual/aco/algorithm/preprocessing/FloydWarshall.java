@@ -12,7 +12,7 @@ import static java.lang.Integer.MAX_VALUE;
 
 public class FloydWarshall {
 
-    private static void calculate(final Graph<? extends Node, ? extends Link> graph, final int maxFuel) {
+    private static void calculate(final Graph graph, final int maxFuel) {
 
         final int graphSize = graph.getGraphSize();
 
@@ -116,7 +116,7 @@ public class FloydWarshall {
         return prevNode.get(start).get(finish);
     }
 
-    public static IntArrayList getRemainsFuel(final Graph<? extends Node, ? extends Link> graph, final int maxFuel) {
+    public static IntArrayList getRemainsFuel(final Graph graph, final int maxFuel) {
 
         clear();
         calculate(graph, maxFuel);

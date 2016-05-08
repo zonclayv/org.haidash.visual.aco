@@ -43,13 +43,13 @@ public class IncrementLinkNumber {
                 }
 
             } catch (IOException e) {
-                throw new AcoRuntimeException("Error via write file", e);
+                throw new AcoRuntimeException("Error via writeHistory file", e);
             }
 
         } catch (final FileNotFoundException e) {
             throw new AcoRuntimeException("Input file is incorrect", e);
         } catch (IOException e) {
-            throw new AcoRuntimeException("Error via write file", e);
+            throw new AcoRuntimeException("Error via writeHistory file", e);
         }
     }
 }

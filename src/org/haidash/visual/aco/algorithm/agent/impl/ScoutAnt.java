@@ -36,7 +36,7 @@ public class ScoutAnt implements Agent {
 
     private boolean outOfFuel = false;
 
-    public ScoutAnt(final Graph<Node, Link> graph) {
+    public ScoutAnt(final Graph graph) {
         this.graph = graph;
 
         final int nodeIndex = getNodeIndex(graph);

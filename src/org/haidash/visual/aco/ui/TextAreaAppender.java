@@ -8,42 +8,40 @@ import org.apache.log4j.spi.LoggingEvent;
 
 public class TextAreaAppender extends WriterAppender {
 
-	/**
-	 * Set the target TextArea for the logging information to appear.
-	 *
-	 * @param textArea
-	 */
-	public static void setTextArea(final TextArea textArea) {
-		TextAreaAppender.textArea = textArea;
-	}
+    /**
+     * Set the target TextArea for the logging information to appear.
+     *
+     * @param textArea
+     */
+    public static void setTextArea(final TextArea textArea) {
+        TextAreaAppender.textArea = textArea;
+    }
 
-	private static volatile TextArea textArea = null;
+    private static volatile TextArea textArea = null;
 
-	@Override
-	public void append(final LoggingEvent loggingEvent) {
-		final String message = this.layout.format(loggingEvent);
+    @Override
+    public void append(final LoggingEvent loggingEvent) {
 
-		try {
-			Platform.runLater(() -> {
-				try {
-					if (textArea == null) {
-						return;
-					}
+        final String message = this.layout.format(loggingEvent);
 
-					if (textArea.getText().length() == 0) {
-						textArea.setText(message);
-					} else {
-						textArea.selectEnd();
-						textArea.insertText(textArea.getText().length(), message);
-					}
+        Platform.runLater(() -> {
 
-					textArea.selectEnd();
+            if (textArea == null) {
+                return;
+            }
 
-				} catch (final Throwable t) {
-					System.out.println("Unable to append log to text area: " + t.getMessage());
-				}
-			});
-		} catch (final IllegalStateException e) {
-		}
-	}
+            final String text = textArea.getText();
+            final int length = text.length();
+
+            if (length == 0) {
+                textArea.setText(message);
+            } else {
+                textArea.selectEnd();
+                textArea.insertText(length, message);
+            }
+
+            textArea.selectEnd();
+
+        });
+    }
 }

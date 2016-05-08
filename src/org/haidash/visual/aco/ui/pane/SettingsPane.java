@@ -2,6 +2,7 @@ package org.haidash.visual.aco.ui.pane;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
@@ -11,23 +12,23 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.haidash.visual.aco.algorithm.graph.Graph;
 import org.haidash.visual.aco.algorithm.util.ACOParameters;
 import org.haidash.visual.aco.ui.GraphChangeListener;
-import org.haidash.visual.aco.ui.model.VisualGraph;
 
 /**
  * Author Aleh Haidash.
  */
-public class SettingsBox extends VBox implements GraphChangeListener {
+public class SettingsPane extends VBox implements GraphChangeListener {
 
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
-    private final VisualGraph graph;
+    private final Graph graph;
     private final Spinner<Integer> fromSpinner;
     private final Spinner<Integer> toSpinner;
 
-    public SettingsBox(VisualGraph graph) {
+    public SettingsPane(Graph graph) {
 
-        this.graph =graph;
+        this.graph = graph;
         this.graph.addListener(this);
 
         setMinWidth(250);
@@ -103,6 +104,26 @@ public class SettingsBox extends VBox implements GraphChangeListener {
         addSlider("Q", ACO_PARAMETERS.getQ());
         addSlider("Ants", ACO_PARAMETERS.getNumAnts());
         addSlider("Gen", ACO_PARAMETERS.getNumGeneration());
+
+        addSeparator();
+
+        final HBox animationHBox = new HBox();
+        animationHBox.setAlignment(Pos.CENTER_LEFT);
+        animationHBox.setPrefWidth(getPrefWidth());
+
+        final SimpleBooleanProperty animation = ACO_PARAMETERS.getAnimation();
+
+        final CheckBox animationButton = new CheckBox("Animation");
+        animationButton.setAlignment(Pos.CENTER_LEFT);
+        animationButton.setSelected(animation.get());
+
+        animation.bind(animationButton.selectedProperty());
+
+        animationHBox.getChildren().addAll(animationButton);
+
+        getChildren().add(animationHBox);
+
+        setDisable(true);
     }
 
     private void addSeparator() {
@@ -165,6 +186,9 @@ public class SettingsBox extends VBox implements GraphChangeListener {
 
     @Override
     public void graphChanged() {
+
+        setDisable(!graph.isReady());
+
         try {
             fromSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, graph.getNodes().size(), graph.getStartNode().getNumber(), 1));
             toSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, graph.getNodes().size(), graph.getTargetNode().getNumber(), 1));

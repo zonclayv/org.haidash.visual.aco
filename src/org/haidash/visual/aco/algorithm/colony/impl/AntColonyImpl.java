@@ -1,32 +1,42 @@
-package org.haidash.visual.aco.algorithm;
+package org.haidash.visual.aco.algorithm.colony.impl;
 
 import com.carrotsearch.hppc.IntArrayList;
 import org.apache.log4j.Logger;
 import org.haidash.visual.aco.algorithm.agent.Agent;
 import org.haidash.visual.aco.algorithm.agent.impl.CycleAndBadPathAnt;
+import org.haidash.visual.aco.algorithm.graph.Graph;
 import org.haidash.visual.aco.algorithm.graph.cycle.Cycle;
 import org.haidash.visual.aco.algorithm.graph.entity.Link;
-import org.haidash.visual.aco.algorithm.graph.Graph;
 import org.haidash.visual.aco.algorithm.graph.entity.Node;
 import org.haidash.visual.aco.algorithm.preprocessing.FloydWarshall;
-import org.haidash.visual.aco.algorithm.util.ACOParameters;
-import org.haidash.visual.aco.algorithm.util.SearchResult;
-import org.haidash.visual.aco.algorithm.util.Utils;
+import org.haidash.visual.aco.algorithm.util.*;
 
 import java.util.*;
 
-public class AntColony {
+public class AntColonyImpl implements org.haidash.visual.aco.algorithm.colony.AntColony {
 
-    private final static Logger LOGGER = Logger.getLogger(AntColony.class);
+    private final static Logger LOGGER = Logger.getLogger(AntColonyImpl.class);
+
     private final static ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     private final Graph graph;
 
-    public AntColony(final Graph graph) {
+    public AntColonyImpl(final Graph graph) {
         this.graph = graph;
     }
 
-    public SearchResult run() {
+    public SearchHistory run() {
+
+        final SearchHistory searchHistory = new SearchHistory();
+        searchHistory.setGraphName(graph.getGraphName());
+        searchHistory.setGraphSize(graph.getGraphSize());
+        searchHistory.setQ(ACO_PARAMETERS.getQ().get());
+        searchHistory.setAlpha(ACO_PARAMETERS.getAlpha().get());
+        searchHistory.setBeta(ACO_PARAMETERS.getBeta().get());
+        searchHistory.setAntCount(ACO_PARAMETERS.getNumAnts().get());
+        searchHistory.setGenerationCount(ACO_PARAMETERS.getNumGeneration().get());
+        searchHistory.setStartNode(graph.getStartNode().getNumber());
+        searchHistory.setTargetNode(graph.getTargetNode().getNumber());
 
         final long startTime = System.currentTimeMillis();
 
@@ -34,12 +44,11 @@ public class AntColony {
 
         final IntArrayList remainsFuel = FloydWarshall.getRemainsFuel(graph, ACO_PARAMETERS.getMaxFuelLevels());
 
-        Utils.processScoutAnts(graph);
+        AlgorithmUtils.processScoutAnts(graph);
 
         LOGGER.info("FloydWarshall initialized...");
 
-        SearchResult globalResult = null;
-
+        Solution globalSolution = null;
 
         final Map<Node, Cycle> cycles = new HashMap<>();
         final Set<List<Link>> badPaths = new HashSet<>();
@@ -48,7 +57,9 @@ public class AntColony {
 
         for (int i = 0; i < numGeneration; i++) {
 
-            SearchResult result = null;
+            final int generationNumber = i + 1;
+
+            Solution localSolution = null;
 
             final int numAnts = ACO_PARAMETERS.getNumAnts().get();
             final List<Agent> agents = new ArrayList<>(numAnts);
@@ -68,18 +79,21 @@ public class AntColony {
 //              LOGGER.debug("New path " + agent.getTotalCost() + " " + agent.getPath());
 //              LOGGER.info("Path " + agent.getTotalCost());
 
-                if (Utils.isNewResult(result, agent.getTotalCost(), agent.getPath().size())) {
-                    result = new SearchResult(agent);
+                if (Solution.isNewBetter(localSolution, agent.getTotalCost(), agent.getPath().size())) {
+                    final long runTime = System.currentTimeMillis() - startTime;
+                    localSolution = new Solution(agent, generationNumber, runTime);
                 }
             }
 
-            agents.forEach(Utils::updatePheromones);
+            agents.forEach(AlgorithmUtils::updatePheromones);
 
-            Utils.processPheromonePersistence(graph);
+            AlgorithmUtils.processPheromonePersistence(graph);
 
-            if (Utils.isNewResult(globalResult, result)) {
-                globalResult = result;
-                LOGGER.info("New path (Population " + i + 1 + ") " + result.getTotalCost() + " " + result.getPath());
+            if (Solution.isNewBetter(globalSolution, localSolution)) {
+                globalSolution = localSolution;
+                LOGGER.info("New path (Population " + generationNumber + ") " + globalSolution.getTotalCost() + " " + globalSolution.getPath());
+
+                searchHistory.addSolution(localSolution);
             }
         }
 
@@ -87,12 +101,12 @@ public class AntColony {
 
         LOGGER.info("PROCESS FINISH (" + finishTime + "ms):");
 
-        if (globalResult == null) {
+        if (globalSolution == null) {
             LOGGER.info("Path not found");
         } else {
-            LOGGER.info("Best path: " + globalResult.getTotalCost());
+            LOGGER.info("Best path: " + globalSolution.getTotalCost());
         }
 
-        return globalResult;
+        return searchHistory;
     }
 }
