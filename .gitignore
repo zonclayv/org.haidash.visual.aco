@@ -1,8 +1,5 @@
 /bin/
-/.settings/
-/out/
-/.classpath
 /.idea/
-/.project
-/build.fxbuild
+/out/
 /visual.aco.iml
+/output

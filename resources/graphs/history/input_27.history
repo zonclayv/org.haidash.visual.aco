@@ -1,0 +1,615 @@
+input_27
+27 0 26 167 159 94 1 3 
+First Solution:
+1 37 17
+0 1 3 11 22 11 20 9 20 8 
+1 2 2 3 1 0 2 4 0 2 
+Best Solution:
+2 51 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+34 73 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 124 134 94 1 3 
+First Solution:
+1 5 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 5 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 93 103 94 1 3 
+First Solution:
+3 10 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+3 10 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 93 103 94 1 3 
+First Solution:
+1 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 93 103 94 1 3 
+First Solution:
+1 11 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 11 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+52 64 19
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 93 103 94 1 3 
+First Solution:
+1 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+87 67 15
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 55 65 94 1 3 
+First Solution:
+1 3 17
+0 1 3 11 22 11 20 9 20 8 
+1 2 2 3 1 0 2 4 0 2 
+Best Solution:
+2 5 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 55 65 94 1 3 
+First Solution:
+4 9 17
+0 1 2 6 19 7 17 5 2 8 
+1 2 2 1 1 3 2 3 0 2 
+Best Solution:
+14 33 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 55 65 94 1 3 
+First Solution:
+2 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+2 7 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+1 2 17
+0 1 3 11 20 9 21 8 
+1 2 2 3 2 4 1 2 
+Best Solution:
+18 70 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+31 6 17
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+3 6 15
+0 1 2 6 18 17 5 17 16 
+1 2 2 1 1 2 4 0 2 
+Best Solution:
+4 8 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+5 9 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Best Solution:
+5 9 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+3 4 15
+0 1 2 6 18 17 5 17 16 
+1 2 2 1 1 2 4 0 2 
+Best Solution:
+6 11 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+8 13 19
+0 1 2 6 19 7 19 7 17 5 18 16 
+1 2 2 1 1 3 0 0 2 4 1 2 
+Best Solution:
+15 23 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+4 9 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+4 9 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+2 3 19
+0 1 2 6 19 7 17 18 17 5 17 16 
+1 2 2 1 1 3 2 1 0 4 0 2 
+Best Solution:
+24 90 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+7 17 18
+0 1 3 10 22 11 20 9 10 21 8 
+1 2 2 1 1 3 2 3 0 1 2 
+Best Solution:
+12 26 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+4 7 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Best Solution:
+4 7 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+1 6 15
+0 1 4 14 24 23 13 23 12 
+1 2 2 1 1 2 4 0 2 
+Best Solution:
+2 9 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 24 34 94 1 3 
+First Solution:
+3 6 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+3 6 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+11 14 19
+0 1 2 6 19 7 19 7 17 5 17 18 16 
+1 2 2 1 1 3 0 0 2 4 0 1 2 
+Best Solution:
+11 14 19
+0 1 2 6 19 7 19 7 17 5 17 18 16 
+1 2 2 1 1 3 0 0 2 4 0 1 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+2 2 18
+0 1 2 6 19 7 17 5 17 18 16 
+1 2 2 1 1 3 2 3 0 1 2 
+Best Solution:
+2 2 18
+0 1 2 6 19 7 17 5 17 18 16 
+1 2 2 1 1 3 2 3 0 1 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+7 15 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+7 15 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+4 3 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+4 3 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+9 9 15
+0 1 2 6 19 7 17 18 16 
+1 2 2 1 1 3 2 1 2 
+Best Solution:
+9 9 15
+0 1 2 6 19 7 17 18 16 
+1 2 2 1 1 3 2 1 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 13 16 94 1 3 
+First Solution:
+7 22 15
+0 1 2 6 18 17 5 17 16 
+1 2 2 1 1 2 4 0 2 
+Best Solution:
+7 22 15
+0 1 2 6 18 17 5 17 16 
+1 2 2 1 1 2 4 0 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 309 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 309 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+2 527 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+2 527 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+2 449 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Best Solution:
+2 449 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 500 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 500 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+38 43 17
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 515 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 515 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 627 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 627 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 10 17
+0 1 3 11 22 11 20 9 20 8 
+1 2 2 3 1 0 2 4 0 2 
+Best Solution:
+6 482 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+20 26 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 825 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 825 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 3 17
+0 1 2 7 17 5 18 17 16 
+1 2 2 3 2 4 1 0 2 
+Best Solution:
+3 497 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 557 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+1 557 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+1 13 17
+0 1 4 14 25 15 23 13 4 16 
+1 2 2 1 1 3 2 3 0 2 
+Best Solution:
+2 527 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+2 6 18
+0 1 2 6 19 7 17 5 17 18 17 16 
+1 2 2 1 1 3 2 3 0 1 0 2 
+Best Solution:
+7 245 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+2 351 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Best Solution:
+2 351 14
+0 1 3 10 22 11 20 8 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+3 418 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Best Solution:
+3 418 14
+0 1 4 14 25 15 23 12 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+-
+-
+-
+--
+input_27
+27 0 26 88 70 10 1 3 
+First Solution:
+2 14 15
+0 1 2 6 18 17 5 17 16 
+1 2 2 1 1 2 4 0 2 
+Best Solution:
+3 692 14
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+Classical Solution:
+10 7 15
+0 1 2 6 19 7 17 16 
+1 2 2 1 1 3 2 2 
+--
