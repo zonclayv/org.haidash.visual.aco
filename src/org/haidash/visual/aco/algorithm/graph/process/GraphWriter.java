@@ -74,7 +74,7 @@ public class GraphWriter {
 
         final List<Link> firstSolutionPath = firstSolution.getPath();
 
-        for (Link link:firstSolutionPath){
+        for (Link link : firstSolutionPath) {
             buffer.append(link.getFirst().getNumber()).append(" ");
         }
 
@@ -96,7 +96,7 @@ public class GraphWriter {
 
         final List<Link> bestSolutionPath = bestSolution.getPath();
 
-        for (Link link:bestSolutionPath){
+        for (Link link : bestSolutionPath) {
             buffer.append(link.getFirst().getNumber()).append(" ");
         }
 
@@ -108,6 +108,38 @@ public class GraphWriter {
             buffer.append(bestSolutionLevel.get(i)).append(" ");
         }
 
+        buffer.append("\n");
+
+        final Solution classicalSolution = history.getClassicalSolution();
+
+
+        buffer.append("Classical Solution:").append("\n");
+
+        if (classicalSolution == null) {
+
+            buffer.append("-").append("\n");
+            buffer.append("-").append("\n");
+            buffer.append("-");
+        } else {
+            buffer.append(classicalSolution.getGeneration()).append(" ");
+            buffer.append(classicalSolution.getTime()).append(" ");
+            buffer.append(classicalSolution.getTotalCost()).append("\n");
+
+            final List<Link> classicalPath = bestSolution.getPath();
+
+            for (Link link : classicalPath) {
+                buffer.append(link.getFirst().getNumber()).append(" ");
+            }
+
+            buffer.append("\n");
+
+            final IntArrayList classicalLevel = bestSolution.getSpentFuelLevel();
+
+            for (int i = 0; i < classicalLevel.size(); i++) {
+                buffer.append(bestSolutionLevel.get(i)).append(" ");
+            }
+        }
+
         buffer.append("\n").append("--").append("\n");
 
         try {
@@ -115,6 +147,7 @@ public class GraphWriter {
         } catch (IOException e) {
             LOGGER.error("Can not add new line in output file.");
         }
+
     }
 
     public void writeGraph(Path path) {

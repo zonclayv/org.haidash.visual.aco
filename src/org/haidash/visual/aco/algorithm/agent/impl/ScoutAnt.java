@@ -51,6 +51,8 @@ public class ScoutAnt implements Agent {
     private int getNodeIndex(Graph graph) {
 
         final Node startNode = graph.getStartNode();
+        final Node targetNode = graph.getTargetNode();
+        final int targetNodeNumber = targetNode.getNumber();
         final int startNodeIndex = startNode.getNumber();
 
         int index;
@@ -59,7 +61,7 @@ public class ScoutAnt implements Agent {
 
             index = RANDOM.nextInt(graph.getGraphSize());
 
-        } while (index == startNodeIndex);
+        } while (index == startNodeIndex || index == targetNodeNumber);
 
         return index;
     }

@@ -6,10 +6,7 @@ import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
@@ -45,9 +42,10 @@ public class ReportPane extends VBox {
     private TextField fileBrowseText;
     private TableView tableView;
     private Path openedPath;
-    private LineChart<Number, Number> chartTimeAnt;
-    private LineChart<Number, Number> chartGenTime;
+    private ScatterChart<Number, Number> chartTimeAnt;
+    private ScatterChart<Number, Number> chartGenTime;
     private PieChart chartFirstBest;
+    private ScatterChart<Number, Number> chartClassicalMod;
 
     public ReportPane() {
 
@@ -156,18 +154,18 @@ public class ReportPane extends VBox {
         antsCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, Integer>("antCount"));
         tableView.getColumns().add(antsCol);
         final TableColumn genCol = new TableColumn();
-        genCol.setText("Populations");
-        genCol.setMinWidth(100);
+        genCol.setText("Populat.");
+        genCol.setMinWidth(80);
         genCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, Integer>("generationCount"));
         tableView.getColumns().add(genCol);
 
         final TableColumn firstSolutionCol = new TableColumn();
-        firstSolutionCol.setText("First Solution");
+        firstSolutionCol.setText("Classical ACO");
 
         final TableColumn firstCostCol = new TableColumn();
         firstCostCol.setText("Cost");
         firstCostCol.setPrefWidth(50);
-        firstCostCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("firstSolution"));
+        firstCostCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("classicalSolution"));
         firstCostCol.setCellFactory(new Callback<TableColumn<SearchHistory, Solution>, TableCell<SearchHistory, Solution>>() {
             @Override
             public TableCell<SearchHistory, Solution> call(TableColumn<SearchHistory, Solution> p) {
@@ -178,7 +176,7 @@ public class ReportPane extends VBox {
                         if (empty) {
                             this.setText("");
                         } else {
-                            this.setText(item.getTotalCost() + "");
+                            this.setText((item == null) ? "-" : item.getTotalCost() + "");
                         }
                     }
                 };
@@ -189,7 +187,7 @@ public class ReportPane extends VBox {
         final TableColumn firstGenCol = new TableColumn();
         firstGenCol.setText("Nr.");
         firstGenCol.setPrefWidth(40);
-        firstGenCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("firstSolution"));
+        firstGenCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("classicalSolution"));
         firstGenCol.setCellFactory(new Callback<TableColumn<SearchHistory, Solution>, TableCell<SearchHistory, Solution>>() {
             @Override
             public TableCell<SearchHistory, Solution> call(TableColumn<SearchHistory, Solution> p) {
@@ -200,7 +198,7 @@ public class ReportPane extends VBox {
                         if (empty) {
                             this.setText("");
                         } else {
-                            this.setText(item.getGeneration() + "");
+                            this.setText((item == null) ? "-" : item.getGeneration() + "");
                         }
                     }
                 };
@@ -210,7 +208,7 @@ public class ReportPane extends VBox {
 
         final TableColumn firstTimeCol = new TableColumn();
         firstTimeCol.setText("Time, ms");
-        firstTimeCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("firstSolution"));
+        firstTimeCol.setCellValueFactory(new PropertyValueFactory<SearchHistory, String>("classicalSolution"));
         firstTimeCol.setCellFactory(new Callback<TableColumn<SearchHistory, Solution>, TableCell<SearchHistory, Solution>>() {
             @Override
             public TableCell<SearchHistory, Solution> call(TableColumn<SearchHistory, Solution> p) {
@@ -221,7 +219,7 @@ public class ReportPane extends VBox {
                         if (empty) {
                             this.setText("");
                         } else {
-                            this.setText(item.getTime() + "");
+                            this.setText((item == null) ? "-" : item.getTime() + "");
                         }
                     }
                 };
@@ -233,7 +231,7 @@ public class ReportPane extends VBox {
         tableView.getColumns().add(firstSolutionCol);
 
         final TableColumn bestSolutionCol = new TableColumn();
-        bestSolutionCol.setText("Best Solution");
+        bestSolutionCol.setText("Mod. ACO");
 
         final TableColumn bestCostCol = new TableColumn();
         bestCostCol.setText("Cost");
@@ -310,10 +308,13 @@ public class ReportPane extends VBox {
 
         stack.getChildren().addAll(tableView, veil, progressIndicator);
 
-        chartTimeAnt = createChart("The speed of finding a solution dependence of the number of ants", "The speed", "Ant Nr.");
+        chartClassicalMod = createScatterChart("Classical ACO vs. Modification ACO", "Population Nr", "Solution, unit");
+        chartClassicalMod.prefWidthProperty().bind(vBox.prefWidthProperty().subtract(25));
+
+        chartTimeAnt = createLineChart("The number of ants dependence of the time of finding a solution", "Ant Nr.", "Time, ms");
         chartTimeAnt.prefWidthProperty().bind(vBox.prefWidthProperty().subtract(25));
 
-        chartGenTime = createChart("The population number dependence of the speed of finding a solution", "The speed", "Population Nr.");
+        chartGenTime = createLineChart("The population number dependence of the time of finding a solution", "Population Nr.", "Time, ms");
         chartGenTime.prefWidthProperty().bind(vBox.prefWidthProperty().subtract(25));
 
         chartFirstBest = new PieChart();
@@ -321,15 +322,27 @@ public class ReportPane extends VBox {
 
         VBox.setMargin(scrollPane, new Insets(10, 0, 0, 0));
 
-        vBox.getChildren().addAll(stack, chartTimeAnt, chartGenTime, chartFirstBest);
+        vBox.getChildren().addAll(stack, chartClassicalMod, chartTimeAnt, chartGenTime, chartFirstBest);
 
         return vBox;
     }
 
-    protected LineChart<Number, Number> createChart(String name, String x, String y) {
+    protected ScatterChart<Number, Number> createLineChart(String name, String x, String y) {
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
-        final LineChart<Number, Number> lc = new LineChart<>(xAxis, yAxis);
+        final ScatterChart<Number, Number> lc = new ScatterChart<>(xAxis, yAxis);
+
+        lc.setTitle(name);
+        xAxis.setLabel(x);
+        yAxis.setLabel(y);
+
+        return lc;
+    }
+
+    protected ScatterChart<Number, Number> createScatterChart(String name, String x, String y) {
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        final ScatterChart<Number, Number> lc = new ScatterChart<>(xAxis, yAxis);
 
         lc.setTitle(name);
         xAxis.setLabel(x);
@@ -342,23 +355,55 @@ public class ReportPane extends VBox {
         chartTimeAnt.getData().clear();
         chartGenTime.getData().clear();
         chartFirstBest.getData().clear();
+        chartClassicalMod.getData().clear();
     }
 
     public void fillCharts(List<SearchHistory> items) {
         fillChartTimeAnt(items);
         fillChartGenTime(items);
         fillChartFirstBest(items);
+        fillChartClassicalMod(items);
     }
 
-    public void fillChartTimeAnt(List<SearchHistory> items) {
-        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+    public void fillChartClassicalMod(List<SearchHistory> items) {
+        XYChart.Series<Number, Number> bestSeries = new XYChart.Series<>();
+        bestSeries.setName("Modification ACO");
+        XYChart.Series<Number, Number> classicalSeries = new XYChart.Series<>();
+        classicalSeries.setName("Classical ACO");
 
         for (SearchHistory historyItem : items) {
             final Solution bestSolution = historyItem.getBestSolution();
-            series.getData().add(new XYChart.Data<>(bestSolution.getTime(), historyItem.getAntCount()));
+            final Solution classicalSolution = historyItem.getClassicalSolution();
+
+            bestSeries.getData().add(new XYChart.Data<>(bestSolution.getGeneration(), bestSolution.getTotalCost()));
+
+            if (classicalSolution != null) {
+                classicalSeries.getData().add(new XYChart.Data<>(classicalSolution.getGeneration(), classicalSolution.getTotalCost()));
+            }
         }
 
-        chartTimeAnt.getData().add(series);
+        chartClassicalMod.getData().addAll(bestSeries, classicalSeries);
+    }
+
+    public void fillChartTimeAnt(List<SearchHistory> items) {
+
+        XYChart.Series<Number, Number> bestSeries = new XYChart.Series<>();
+        bestSeries.setName("Modification ACO");
+        XYChart.Series<Number, Number> classicalSeries = new XYChart.Series<>();
+        classicalSeries.setName("Classical ACO");
+
+        for (SearchHistory historyItem : items) {
+            final Solution bestSolution = historyItem.getBestSolution();
+            final Solution classicalSolution = historyItem.getClassicalSolution();
+
+            bestSeries.getData().add(new XYChart.Data<>(bestSolution.getTime(), historyItem.getAntCount()));
+
+            if (classicalSolution != null) {
+                classicalSeries.getData().add(new XYChart.Data<>(classicalSolution.getTime(), historyItem.getAntCount()));
+            }
+        }
+
+        chartTimeAnt.getData().addAll(bestSeries, classicalSeries);
     }
 
     public void fillChartFirstBest(List<SearchHistory> items) {
@@ -391,16 +436,23 @@ public class ReportPane extends VBox {
         bestSeries.setName("Best solution");
         XYChart.Series<Number, Number> firstSeries = new XYChart.Series<>();
         firstSeries.setName("First solution");
+        XYChart.Series<Number, Number> classicalSeries = new XYChart.Series<>();
+        classicalSeries.setName("Classical solution");
 
         for (SearchHistory historyItem : items) {
             final Solution firstSolution = historyItem.getFirstSolution();
             final Solution bestSolution = historyItem.getBestSolution();
+            final Solution classicalSolution = historyItem.getClassicalSolution();
 
-            bestSeries.getData().add(new XYChart.Data<>(bestSolution.getTime(), bestSolution.getGeneration()));
-            firstSeries.getData().add(new XYChart.Data<>(firstSolution.getTime(), firstSolution.getGeneration()));
+            bestSeries.getData().add(new XYChart.Data<>(bestSolution.getGeneration(), bestSolution.getTime()));
+            firstSeries.getData().add(new XYChart.Data<>(firstSolution.getGeneration(), firstSolution.getTime()));
+
+            if (classicalSolution != null) {
+                classicalSeries.getData().add(new XYChart.Data<>(classicalSolution.getGeneration(), classicalSolution.getTime()));
+            }
         }
 
-        chartGenTime.getData().addAll(firstSeries, bestSeries);
+        chartGenTime.getData().addAll(firstSeries, bestSeries, classicalSeries);
     }
 
     public void openFile(Consumer<String> consumer) {

@@ -59,6 +59,8 @@ public class Graph {
     public void clear() {
         final List<Node> nodes = getNodes();
         nodes.forEach(Node::clear);
+        final List<Link> links = getLinks();
+        links.forEach(Link::clear);
     }
 
     public IntArrayList getFuelLevels() {

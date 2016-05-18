@@ -5,7 +5,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import org.apache.log4j.Logger;
-import org.haidash.visual.aco.algorithm.graph.process.HistoryReader;
 import org.haidash.visual.aco.algorithm.util.SearchHistory;
 import org.haidash.visual.aco.algorithm.util.Solution;
 
@@ -32,9 +31,9 @@ public abstract class LoadHistoryTask extends Task<ObservableList<SearchHistory>
     private final List<SearchHistory> history;
     private final Consumer<List<SearchHistory>> fillConsumer;
 
-    public LoadHistoryTask( Consumer<List<SearchHistory>> fillConsumer) {
+    public LoadHistoryTask(Consumer<List<SearchHistory>> fillConsumer) {
         this.history = new ArrayList<>();
-        this.fillConsumer=fillConsumer;
+        this.fillConsumer = fillConsumer;
     }
 
     @Override
@@ -78,15 +77,15 @@ public abstract class LoadHistoryTask extends Task<ObservableList<SearchHistory>
 
         final int size = allLines.size();
 
-        if (size < 11) {
+        if (size < 14) {
             return;
         }
 
-        final long max = (size / 11);
+        final long max = (size / 14);
 
         for (int i = 0; i < size; i++) {
 
-            final int toIndex = i + 10;
+            final int toIndex = i + 14;
 
             try {
 
@@ -96,8 +95,8 @@ public abstract class LoadHistoryTask extends Task<ObservableList<SearchHistory>
                     history.add(searchHistory);
                 }
 
-                updateProgress((i / 11), max);
-                Thread.sleep(5);
+                updateProgress((i / 14), max);
+                Thread.sleep(10);
 
             } catch (Exception e) {
                 i = toIndex;
@@ -114,7 +113,7 @@ public abstract class LoadHistoryTask extends Task<ObservableList<SearchHistory>
 
     private SearchHistory readHistory(List<String> strings) {
 
-        if (strings.size() < 10) {
+        if (strings.size() < 13) {
             return null;
         }
 
@@ -152,6 +151,20 @@ public abstract class LoadHistoryTask extends Task<ObservableList<SearchHistory>
         bestSolution.setTotalCost(Integer.valueOf(bestSplit[2]));
 
         searchHistory.setBestSolution(bestSolution);
+
+        final String classicalSolutionString = strings.get(11);
+        final String[] classicalSplit = classicalSolutionString.split(" ");
+
+        if ("-".equals(classicalSplit[0])) {
+            return searchHistory;
+        }
+
+        final Solution classicalSolution = new Solution();
+        classicalSolution.setGeneration(Integer.valueOf(classicalSplit[0]));
+        classicalSolution.setTime(Long.valueOf(classicalSplit[1]));
+        classicalSolution.setTotalCost(Integer.valueOf(classicalSplit[2]));
+
+        searchHistory.setClassicalSolution(classicalSolution);
 
         return searchHistory;
     }

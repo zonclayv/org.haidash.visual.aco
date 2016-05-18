@@ -57,6 +57,7 @@ public class GlobalScene extends Scene {
     private ProgressIndicator progressIndicator;
     private Button runButton;
     private SettingsPane settingsVBox;
+    private Button browseButton;
 
     public GlobalScene(final Group group, final double v, final double v1) {
         super(group, v, v1);
@@ -152,7 +153,7 @@ public class GlobalScene extends Scene {
 
         rootVBox.getChildren().add(stackPane);
 
-        final Button browseButton = new Button();
+        browseButton = new Button();
         browseButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("/icons/open.png"))));
         browseButton.setTooltip(new Tooltip("Browse"));
         browseButton.addEventHandler(MOUSE_CLICKED, (final MouseEvent mouseEvent) -> graphPane.openFile((value) -> {
@@ -188,7 +189,7 @@ public class GlobalScene extends Scene {
 
         HBox.setMargin(fileBrowseText, new Insets(0, 5, 0, 0));
         HBox.setMargin(browseButton, new Insets(0, 5, 0, 0));
-        HBox.setMargin(runStackPane, new Insets(-12, 0, 0, 0));
+        HBox.setMargin(runStackPane, new Insets(-13, 0, 0, 0));
 
         graphVBox = new VBox();
         graphVBox.setAlignment(Pos.TOP_CENTER);
@@ -243,6 +244,8 @@ public class GlobalScene extends Scene {
         progressIndicator.setVisible(true);
         settingsVBox.setDisable(true);
         graphPane.setDisableGraph(true);
+        browseButton.setDisable(true);
+        fileBrowseText.setDisable(true);
         progressIndicator.toFront();
 
         // loads the items at another thread, asynchronously
@@ -252,6 +255,8 @@ public class GlobalScene extends Scene {
                     progressIndicator.toBack();
                     runButton.setDisable(false);
                     graphPane.setDisableGraph(false);
+                    browseButton.setDisable(false);
+                    fileBrowseText.setDisable(false);
                     progressIndicator.setVisible(false);
                     settingsVBox.setDisable(false);
 

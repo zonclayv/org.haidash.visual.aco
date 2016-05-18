@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public class SearchHistory {
 
+    private Solution classicalSolution;
     private Solution firstSolution;
     private Solution bestSolution;
     private String graphName;
@@ -131,5 +132,13 @@ public class SearchHistory {
 
     public void setGraphName(String graphName) {
         this.graphName = graphName;
+    }
+
+    public Solution getClassicalSolution() {
+        return classicalSolution;
+    }
+
+    public void setClassicalSolution(Solution classicalSolution) {
+        this.classicalSolution = classicalSolution;
     }
 }

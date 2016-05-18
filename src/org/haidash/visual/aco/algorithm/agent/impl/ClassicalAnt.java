@@ -26,7 +26,6 @@ public class ClassicalAnt implements Agent {
     private static final ACOParameters ACO_PARAMETERS = ACOParameters.INSTANCE;
 
     private final Graph graph;
-    private final IntArrayList remainsFuel;
 
     private final List<Link> path;
     private final IntArrayList spentFuelLevel;
@@ -39,9 +38,8 @@ public class ClassicalAnt implements Agent {
 
     private boolean outOfFuel = false;
 
-    public ClassicalAnt(final Graph graph, final IntArrayList remainsFuel) {
+    public ClassicalAnt(final Graph graph) {
         this.graph = graph;
-        this.remainsFuel = remainsFuel;
 
         this.currentNode = graph.getStartNode();
         this.tempFuelLevel = new IntArrayList(graph.getFuelLevels());
@@ -75,42 +73,20 @@ public class ClassicalAnt implements Agent {
 
             final int availableFuel = getAvailableFuel();
 
-            if (availableFuel >= link.getWeight()) {
+            if (availableFuel < link.getWeight()) {
                 continue;
             }
 
-            final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
             final double powAlphaValue = pow(link.getWeight(), ACO_PARAMETERS.getBeta().get());
-            final double etaVisits = link.getVisitsCount() == 0 ? ACO_PARAMETERS.getNumAnts().get() : (ACO_PARAMETERS.getNumAnts().get() / powBetaValue);
             final double etaCost = ACO_PARAMETERS.getQ().get() / powAlphaValue;
 
-            double etaRemaning;
-
-            final double k = (availableFuel - link.getWeight()) + remainsFuel.get(link.getSecond().getNumber());
-
-            if (k > 0) {
-                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels() / pow(k, ACO_PARAMETERS.getBeta().get());
-            } else if (k < 0) {
-                double tempK = 1 / pow(abs(k), ACO_PARAMETERS.getBeta().get());
-                tempK = tempK == 1 ? 0 : tempK;
-                etaRemaning = -1 * (1 - tempK);
-            } else {
-                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels();
-            }
-
-            double eta = (0.3 * etaCost) + (0.3 * etaRemaning) + (0.3 * etaVisits);
-
-            if (eta < 0) {
-                eta = 1;
-            }
-
-            final double tau = link.getPPheromone() / link.getNPheromone();
+            final double tau = link.getPPheromone();
 
             if (sum == -1.0) {
                 sum = getSumProbabilities();
             }
 
-            final double probability = 100 * ((pow(tau, ACO_PARAMETERS.getAlpha().get()) * eta) / sum);
+            final double probability = 100 * ((pow(tau, ACO_PARAMETERS.getAlpha().get()) * etaCost) / sum);
 
 //            LOGGER.debug("Chance "
 //                    + currentNode
@@ -160,38 +136,16 @@ public class ClassicalAnt implements Agent {
 
             final int availableFuel = getAvailableFuel();
 
-            if (availableFuel >= link.getWeight()) {
+            if (availableFuel < link.getWeight()) {
                 continue;
             }
 
-            final double powBetaValue = pow(link.getVisitsCount(), ACO_PARAMETERS.getBeta().get());
             final double powAlphaValue = pow(link.getWeight(), ACO_PARAMETERS.getBeta().get());
-            final double etaVisits = link.getVisitsCount() == 0 ? ACO_PARAMETERS.getNumAnts().get() : (ACO_PARAMETERS.getNumAnts().get() / powBetaValue);
             final double etaCost = ACO_PARAMETERS.getQ().get() / powAlphaValue;
 
-            double etaRemaning;
+            final double tau = link.getPPheromone();
 
-            final double k = (availableFuel - link.getWeight()) + remainsFuel.get(link.getSecond().getNumber());
-
-            if (k > 0) {
-                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels() / pow(k, ACO_PARAMETERS.getBeta().get());
-            } else if (k < 0) {
-                double tempK = 1 / pow(abs(k), ACO_PARAMETERS.getBeta().get());
-                tempK = tempK == 1 ? 0 : tempK;
-                etaRemaning = -1 * (1 - tempK);
-            } else {
-                etaRemaning = ACO_PARAMETERS.getMaxFuelLevels();
-            }
-
-            double eta = (0.3 * etaCost) + (0.3 * etaRemaning) + (0.3 * etaVisits);
-
-            if (eta < 0) {
-                eta = 1;
-            }
-
-            final double tau = link.getPPheromone() / link.getNPheromone();
-
-            sum += pow(tau, ACO_PARAMETERS.getAlpha().get()) * eta;
+            sum += pow(tau, ACO_PARAMETERS.getAlpha().get()) * etaCost;
         }
 
         return sum;
