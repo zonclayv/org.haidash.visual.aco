@@ -82,7 +82,12 @@ public class AlgorithmUtils {
         double deltaTau = 0;
 
         if (agent.getTotalCost() != 0) {
-            deltaTau = ACO_PARAMETERS.getQ().get() / agent.getTotalCost();
+            if (!agent.isOutOfFuel()) {
+                deltaTau = (ACO_PARAMETERS.getQ().get() < agent.getTotalCost()) ? agent.getTotalCost() / ACO_PARAMETERS.getQ().get() : ACO_PARAMETERS.getQ().get() / agent.getTotalCost();
+            } else {
+                deltaTau = ACO_PARAMETERS.getQ().get() / agent.getTotalCost();
+            }
+
         }
 
         for (Link link : path) {
